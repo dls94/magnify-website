@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from enum import Enum
 from typing import Optional, List
 
@@ -17,6 +17,19 @@ class Track:
     isrc: Optional[str] = None
     track_number: int = 1
 
+    def __post_init__(self) -> None:
+        if not self.title or not self.title.strip():
+            raise ValueError("Le titre du morceau est obligatoire.")
+
+        if self.duration_seconds <= 0:
+            raise ValueError(
+                "La durée du morceau doit être supérieure à zéro."
+            )
+
+        if self.track_number < 1:
+            raise ValueError(
+                "Le numéro de piste doit être supérieur ou égal à 1."
+            )
 
 
 @dataclass
@@ -31,7 +44,8 @@ class Release:
     spotify_url: Optional[str] = None
     tracks: List[Track] = field(default_factory=list)
     is_published: bool = False
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+
 
     # 2. Règles Métier (Comportement de l'entité)
     def add_track(self, title: str, duration_seconds: int, isrc: Optional[str] = None) -> None:
@@ -55,6 +69,12 @@ class Release:
 
     def publish(self) -> None:
         """Publie la release si les conditions métier sont remplies."""
+
+        if self.is_published:
+            raise ValueError(
+                "La release est déjà publiée."
+            )
+
         if not self.can_be_published():
             raise ValueError(
                 "Impossible de publier la release : il manque la pochette ou au moins un morceau."
