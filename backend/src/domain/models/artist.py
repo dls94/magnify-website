@@ -1,6 +1,6 @@
-from datetime import datetime
 from dataclasses import dataclass, field
 from typing import Optional
+from datetime import datetime, timezone
 
 
 @dataclass
@@ -12,10 +12,19 @@ class Artist:
     spotify_url: Optional[str] = None
     instagram_url: Optional[str] = None
     picture_url: Optional[str] = None
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
-    def update_social_links(self, spotify_url: Optional[str] = None, instagram_url: Optional[str] = None):
+    def __post_init__(self) -> None:
+        if not self.name or not self.name.strip():
+            raise ValueError("Le nom de l'artiste est obligatoire")
+
+    def update_social_links(
+            self,
+            spotify_url: Optional[str] = None,
+            instagram_url: Optional[str] = None
+    ) -> None:
         """Exemple de règle métier : mise à jour des réseaux sociaux."""
+
         if spotify_url and not spotify_url.startswith("https://open.spotify.com/"):
             raise ValueError("L'URL Spotify est invalide.")
 
@@ -26,4 +35,9 @@ class Artist:
 
     def is_profile_complete(self) -> bool:
         """Vérifie si la fiche artiste est complète pour être affichée sur le site."""
-        return bool(self.name and self.bio and self.picture_url)
+        return bool(
+            self.name
+            and self.bio
+            and self.picture_url
+        )
+
