@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Optional
+from datetime import datetime, timezone
 from enum import Enum
+from typing import Optional
 
 
 class EventType(str, Enum):
@@ -13,32 +13,36 @@ class EventType(str, Enum):
 
 @dataclass
 class Event:
-    # 1. Attributs de l'événement
     title: str
     description: str
     event_type: EventType
     event_date: datetime
     id: Optional[str] = None
-    venue_name: Optional[str] = None      # Nom de la salle (ex: "Le Bataclan")
-    city: Optional[str] = None            # Ville (ex: "Paris")
-    ticket_url: Optional[str] = None      # Lien vers la billetterie
+    venue_name: Optional[str] = None
+    city: Optional[str] = None
+    ticket_url: Optional[str] = None
     cover_image_url: Optional[str] = None
-    artist_id: Optional[str] = None       # ID de l'artiste lié (si ce n'est pas une actu générale du label)
+    artist_id: Optional[str] = None
     is_published: bool = False
-    created_at: datetime = field(default_factory=datetime.utcnow) if False else None # Note: On utilise datetime.utcnow
+    created_at: datetime = field(
+        default_factory=lambda: datetime.now(timezone.utc)
+    )
 
-    # Note : On initialise created_at proprement
-    def __post_init__(self):
-        if self.created_at is None:
-            self.created_at = datetime.utcnow()
+    def __post_init__(self) -> None:
+        if not self.title or not self.title.strip():
+            raise ValueError("Le titre de l'événement est obligatoire.")
 
-    # 2. Règles Métier
     def is_past(self) -> bool:
-        """Vérifie si l'événement est déjà passé."""
-        return self.event_date < datetime.utcnow()
+        now = datetime.now(timezone.utc)
+        return self.event_date < now
 
     def publish(self) -> None:
-        """Publie l'événement s'il contient au minimum une date et un titre validés."""
-        if not self.title or not self.event_date:
-            raise ValueError("Impossible de publier un événement sans titre ni date.")
+        if self.is_published:
+            raise ValueError("L'événement est déjà publié.")
+
+        if not self.title or not self.title.strip() or not self.event_date:
+            raise ValueError(
+                "Impossible de publier un événement sans titre ni date."
+            )
+
         self.is_published = True
