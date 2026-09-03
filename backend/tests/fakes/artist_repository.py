@@ -1,10 +1,8 @@
 from uuid import UUID
-
-from application.ports.artist_repository import ArtistRepositoryPort
 from domain.models.artist import Artist
 
 
-class InMemoryArtistRepository(ArtistRepositoryPort):
+class InMemoryArtistRepository:
 
     def __init__(self) -> None:
         self.artists: dict[UUID, Artist] = {}
