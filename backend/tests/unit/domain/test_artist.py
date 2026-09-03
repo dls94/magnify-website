@@ -112,3 +112,56 @@ def test_artist_keeps_existing_social_links_when_not_updated():
 
     assert artist.spotify_url == "https://open.spotify.com/artist/123"
     assert artist.instagram_url == "https://instagram.com/testartist"
+
+def test_artist_can_update_profile():
+    artist = Artist(
+        name="Ancien nom",
+        bio="Ancienne bio",
+        picture_url="https://example.com/old.jpg",
+        spotify_url="https://open.spotify.com/artist/old",
+        instagram_url="https://instagram.com/old",
+    )
+
+    artist.update_profile(
+        name="Nouveau nom",
+        bio="Nouvelle bio",
+        picture_url="https://example.com/new.jpg",
+        spotify_url="https://open.spotify.com/artist/new",
+        instagram_url="https://instagram.com/new",
+    )
+
+    assert artist.name == "Nouveau nom"
+    assert artist.bio == "Nouvelle bio"
+    assert artist.picture_url == "https://example.com/new.jpg"
+    assert artist.spotify_url == "https://open.spotify.com/artist/new"
+    assert artist.instagram_url == "https://instagram.com/new"
+
+
+def test_artist_update_profile_keeps_omitted_fields():
+    artist = Artist(
+        name="Artiste",
+        bio="Ma bio",
+        picture_url="https://example.com/photo.jpg",
+    )
+
+    artist.update_profile(name="Nouveau nom")
+
+    assert artist.name == "Nouveau nom"
+    assert artist.bio == "Ma bio"
+    assert artist.picture_url == "https://example.com/photo.jpg"
+
+
+def test_artist_update_profile_rejects_blank_name():
+    artist = Artist(name="Artiste")
+
+    with pytest.raises(ValueError, match="nom"):
+        artist.update_profile(name="   ")
+
+
+def test_artist_update_profile_rejects_invalid_spotify_url():
+    artist = Artist(name="Artiste")
+
+    with pytest.raises(ValueError, match="Spotify"):
+        artist.update_profile(
+            spotify_url="https://youtube.com/artist"
+        )

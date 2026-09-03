@@ -41,3 +41,29 @@ class Artist:
             and self.picture_url
         )
 
+    def update_profile(
+            self,
+            name: str | None = None,
+            bio: str | None = None,
+            picture_url: str | None = None,
+            spotify_url: str | None = None,
+            instagram_url: str | None = None,
+    ) -> None:
+        if name is not None:
+            if not name.strip():
+                raise ValueError("Le nom de l'artiste est obligatoire.")
+            self.name = name
+
+        if bio is not None:
+            self.bio = bio
+
+        if picture_url is not None:
+            self.picture_url = picture_url
+
+        if spotify_url is not None:
+            if not spotify_url.startswith("https://open.spotify.com/"):
+                raise ValueError("L'URL Spotify est invalide.")
+            self.spotify_url = spotify_url
+
+        if instagram_url is not None:
+            self.instagram_url = instagram_url
