@@ -1,27 +1,27 @@
+from uuid import UUID
+
 import pytest
 from datetime import datetime, timezone
 from domain.models.artist import Artist
 
 
+
+
 def test_artist_require_a_name():
     with pytest.raises(ValueError):
-        Artist(
-            id=None,
-            name="",
-        )
+        Artist(name="",)
 
 def test_artist_reject_blank_name():
     with pytest.raises(ValueError):
-        Artist(
-            id=None,
-            name="  ",
-        )
+        Artist(name="  ",)
+
+def test_artist_has_an_id():
+    artist = Artist(name="Test Artist")
+
+    assert isinstance(artist.id, UUID)
 
 def test_artist_can_be_created_without_optional_information():
-    artist = Artist(
-        id=None,
-        name="Test Artist",
-    )
+    artist = Artist(name="Test Artist",)
 
     assert artist.name == "Test Artist"
     assert artist.bio is None
@@ -31,7 +31,6 @@ def test_artist_can_be_created_without_optional_information():
 
 def test_artist_profile_is_incomplete_without_bio():
     artist = Artist(
-        id=None,
         name="Test Artist",
         picture_url="https://example.com/artist.jpg",
     )
@@ -41,7 +40,6 @@ def test_artist_profile_is_incomplete_without_bio():
 
 def test_artist_profile_is_incomplete_without_picture():
     artist = Artist(
-        id=None,
         name="Test Artist",
         bio="A great artist.",
     )
@@ -51,7 +49,6 @@ def test_artist_profile_is_incomplete_without_picture():
 
 def test_artist_profile_is_complete():
     artist = Artist(
-        id=None,
         name="Test Artist",
         bio="A great artist.",
         picture_url="https://example.com/artist.jpg",
@@ -62,7 +59,6 @@ def test_artist_profile_is_complete():
 
 def test_artist_accepts_valid_spotify_url():
     artist = Artist(
-        id=None,
         name="Test Artist",
     )
 
@@ -75,7 +71,6 @@ def test_artist_accepts_valid_spotify_url():
 
 def test_artist_rejects_invalid_spotify_url():
     artist = Artist(
-        id=None,
         name="Test Artist",
     )
 
@@ -86,7 +81,6 @@ def test_artist_rejects_invalid_spotify_url():
 
 def test_artist_has_creation_date():
     artist = Artist(
-        id=None,
         name="Test Artist",
     )
 
@@ -95,7 +89,6 @@ def test_artist_has_creation_date():
 
 def test_artist_can_update_social_links():
     artist = Artist(
-        id=None,
         name="Test Artist",
     )
 
@@ -109,7 +102,6 @@ def test_artist_can_update_social_links():
 
 def test_artist_keeps_existing_social_links_when_not_updated():
     artist = Artist(
-        id=None,
         name="Test Artist",
         instagram_url="https://instagram.com/testartist",
     )

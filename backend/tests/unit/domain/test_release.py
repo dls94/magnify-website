@@ -1,13 +1,14 @@
 import pytest
 from datetime import date, datetime, timezone
-
+from uuid import UUID
 from domain.models.release import Release, ReleaseType, Track
 
+ARTIST_ID = UUID("12345678-1234-5678-1234-567812345678")
 
 def make_release(**kwargs) -> Release:
     defaults = {
         "title": "Echo Urbain",
-        "artist_id": "artist-123",
+        "artist_id": ARTIST_ID,
         "release_type": ReleaseType.SINGLE,
         "release_date": date(2026, 9, 1),
     }

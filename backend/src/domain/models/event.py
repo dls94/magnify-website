@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
+from uuid import UUID, uuid4
 
 
 class EventType(str, Enum):
@@ -13,16 +14,17 @@ class EventType(str, Enum):
 
 @dataclass
 class Event:
+
     title: str
     description: str
     event_type: EventType
     event_date: datetime
-    id: Optional[str] = None
+    id: UUID = field(default_factory=uuid4)
+    artist_id: UUID | None = None
     venue_name: Optional[str] = None
     city: Optional[str] = None
     ticket_url: Optional[str] = None
     cover_image_url: Optional[str] = None
-    artist_id: Optional[str] = None
     is_published: bool = False
     created_at: datetime = field(
         default_factory=lambda: datetime.now(timezone.utc)

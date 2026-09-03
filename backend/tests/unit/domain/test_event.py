@@ -1,6 +1,6 @@
 import pytest
 from datetime import datetime, timezone
-
+from uuid import UUID
 from domain.models.event import Event, EventType
 
 
@@ -22,6 +22,10 @@ def test_event_can_be_created():
     assert event.event_type == EventType.CONCERT
     assert event.is_published is False
 
+def test_event_has_an_id():
+    event = make_event()
+
+    assert isinstance(event.id, UUID)
 
 def test_event_requires_a_title():
     with pytest.raises(ValueError):

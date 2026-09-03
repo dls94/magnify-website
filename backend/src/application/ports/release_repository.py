@@ -1,6 +1,7 @@
 # app/application/ports/release_repository.py
 from abc import ABC, abstractmethod
-from typing import Optional, List
+from uuid import UUID
+
 from src.domain.models import Release
 
 
@@ -12,11 +13,11 @@ class ReleaseRepositoryPort(ABC):
         pass
 
     @abstractmethod
-    def get_by_id(self, release_id: str) -> Optional[Release]:
+    def get_by_id(self, release_id: UUID) -> Release | None:
         """Récupère une sortie par son ID."""
         pass
 
     @abstractmethod
-    def list_by_artist(self, artist_id: str) -> List[Release]:
+    def list_by_artist(self, artist_id: UUID) -> list[Release]:
         """Récupère toutes les sorties d'un artiste spécifique."""
         pass

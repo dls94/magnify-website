@@ -1,18 +1,18 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
-from src.domain.models import Artist
+from uuid import UUID
+from domain.models import Artist
 
 
 class ArtistRepositoryPort(ABC):
 
     @abstractmethod
-    def save(self, artist: Artist) -> Artist:
+    def save(self, artist: UUID) -> Artist | None:
         pass
 
     @abstractmethod
-    def get_by_id(self, artist_id: int) -> Optional[Artist]:
+    def get_by_id(self, artist_id: UUID) -> Artist | None:
         pass
 
     @abstractmethod
-    def list_all(self) -> List[Artist]:
+    def list_all(self) -> list[Artist]:
         pass

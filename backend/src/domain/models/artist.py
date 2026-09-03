@@ -1,13 +1,13 @@
 from dataclasses import dataclass, field
 from typing import Optional
 from datetime import datetime, timezone
-
+from uuid import UUID, uuid4
 
 @dataclass
 class Artist:
 
-    id: Optional[str]
     name: str
+    id: UUID = field(default_factory=uuid4)
     bio: Optional[str] = None
     spotify_url: Optional[str] = None
     instagram_url: Optional[str] = None

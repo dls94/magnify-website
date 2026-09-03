@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, date, timezone
 from enum import Enum
 from typing import Optional, List
+from uuid import UUID, uuid4
 
 
 class ReleaseType(str, Enum):
@@ -34,11 +35,13 @@ class Track:
 
 @dataclass
 class Release:
+
     title: str
-    artist_id: str
     release_type: ReleaseType
     release_date: date
-    id: Optional[str] = None
+    cover_url: str | None
+    id: UUID = field(default_factory=uuid4)
+    artist_id: UUID | None = None
     cover_url: Optional[str] = None
     upc: Optional[str] = None  # Code barre produit / Universal Product Code
     spotify_url: Optional[str] = None
