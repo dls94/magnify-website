@@ -1,8 +1,7 @@
-# app/application/ports/release_repository.py
 from abc import ABC, abstractmethod
 from uuid import UUID
 
-from src.domain.models import Release
+from domain.models import Release
 
 
 class ReleaseRepositoryPort(ABC):

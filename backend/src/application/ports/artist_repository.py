@@ -6,7 +6,7 @@ from domain.models import Artist
 class ArtistRepositoryPort(ABC):
 
     @abstractmethod
-    def save(self, artist: UUID) -> Artist | None:
+    def save(self, artist: Artist) -> Artist:
         pass
 
     @abstractmethod
