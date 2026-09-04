@@ -16,3 +16,10 @@ class InMemoryArtistRepository:
 
     async def list_all(self) -> list[Artist]:
         return list(self.artists.values())
+
+    async def delete(self, artist_id: UUID) -> bool:
+        if artist_id not in self.artists:
+            return False
+
+        del self.artists[artist_id]
+        return True

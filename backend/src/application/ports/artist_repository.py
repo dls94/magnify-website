@@ -13,3 +13,6 @@ class ArtistRepositoryPort(Protocol):
 
     async def list_all(self) -> list[Artist]:
         pass
+
+    async def delete(self, artist_id: UUID) -> bool:
+        pass

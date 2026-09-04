@@ -3,6 +3,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+
 from application.ports.artist_repository import ArtistRepositoryPort
 from domain.models.artist import Artist
 from infrastructure.database.models.artist import ArtistModel
@@ -81,3 +82,17 @@ class ArtistRepository(ArtistRepositoryPort):
             )
             for artist_model in artist_models
         ]
+
+    async def delete(self, artist_id: UUID) -> bool:
+        result = await self.session.execute(
+            select(ArtistModel).where(ArtistModel.id == artist_id)
+        )
+        artist_model = result.scalar_one_or_none()
+
+        if artist_model is None:
+            return False
+
+        await self.session.delete(artist_model)
+        await self.session.commit()
+
+        return True

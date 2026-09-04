@@ -16,7 +16,7 @@ class Artist:
 
     def __post_init__(self) -> None:
         if not self.name or not self.name.strip():
-            raise ValueError("Le nom de l'artiste est obligatoire")
+            raise ValueError("Le nom de l'artiste est obligatoire.")
 
     def update_social_links(
             self,

@@ -103,3 +103,19 @@ async def test_save_existing_artist_updates_artist():
     assert result is not None
     assert result.name == "Updated Name"
     assert result.bio == "Updated bio"
+
+async def test_delete_removes_artist():
+    artist = Artist(name="Artist To Delete")
+
+    async with AsyncSessionLocal() as session:
+        repository = ArtistRepository(session)
+
+        await repository.save(artist)
+
+        deleted = await repository.delete(artist.id)
+
+        assert deleted is True
+
+        result = await repository.get_by_id(artist.id)
+
+        assert result is None
