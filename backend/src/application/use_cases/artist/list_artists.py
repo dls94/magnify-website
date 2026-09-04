@@ -7,5 +7,5 @@ class ListArtists:
     def __init__(self, repository: ArtistRepositoryPort) -> None:
         self.repository = repository
 
-    def execute(self) -> list[Artist]:
-        return self.repository.list_all()
+    async def execute(self) -> list[Artist]:
+        return await self.repository.list_all()

@@ -8,7 +8,7 @@ class UpdateArtist:
     def __init__(self, repository: ArtistRepositoryPort) -> None:
         self.repository = repository
 
-    def execute(
+    async def execute(
         self,
         artist_id: UUID,
         name: str | None = None,
@@ -17,7 +17,7 @@ class UpdateArtist:
         spotify_url: str | None = None,
         instagram_url: str | None = None,
     ) -> Artist | None:
-        artist = self.repository.get_by_id(artist_id)
+        artist = await self.repository.get_by_id(artist_id)
 
         if artist is None:
             return None
@@ -30,4 +30,4 @@ class UpdateArtist:
             instagram_url=instagram_url,
         )
 
-        return self.repository.save(artist)
+        return await self.repository.save(artist)

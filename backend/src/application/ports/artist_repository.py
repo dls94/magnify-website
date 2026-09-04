@@ -5,11 +5,11 @@ from domain.models import Artist
 
 class ArtistRepositoryPort(Protocol):
 
-    def save(self, artist: Artist) -> Artist:
+    async def save(self, artist: Artist) -> Artist:
         pass
 
-    def get_by_id(self, artist_id: UUID) -> Artist | None:
+    async def get_by_id(self, artist_id: UUID) -> Artist | None:
         pass
 
-    def list_all(self) -> list[Artist]:
+    async def list_all(self) -> list[Artist]:
         pass

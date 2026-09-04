@@ -7,7 +7,7 @@ class CreateArtist:
     def __init__(self, repository: ArtistRepositoryPort) -> None:
         self.repository = repository
 
-    def execute(
+    async def execute(
         self,
         name: str,
         bio: str | None = None,
@@ -23,4 +23,4 @@ class CreateArtist:
             instagram_url=instagram_url,
         )
 
-        return self.repository.save(artist)
+        return await self.repository.save(artist)

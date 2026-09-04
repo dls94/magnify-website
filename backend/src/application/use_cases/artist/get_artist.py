@@ -9,5 +9,5 @@ class GetArtist:
     def __init__(self, repository: ArtistRepositoryPort) -> None:
         self.repository = repository
 
-    def execute(self, artist_id: UUID) -> Artist | None:
-        return self.repository.get_by_id(artist_id)
+    async def execute(self, artist_id: UUID) -> Artist | None:
+        return await self.repository.get_by_id(artist_id)
