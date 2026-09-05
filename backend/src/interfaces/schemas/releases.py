@@ -21,3 +21,13 @@ class ReleaseResponse(BaseModel):
     release_type: ReleaseType
     release_date: date
     cover_url: str | None
+
+
+class ReleaseUpdate(BaseModel):
+    title: str | None = None
+    artist_id: UUID | None = None
+    release_type: ReleaseType | None = None
+    release_date: date | None = None
+    cover_url: str | None = None
+    upc: str | None = None
+    spotify_url: str | None = None

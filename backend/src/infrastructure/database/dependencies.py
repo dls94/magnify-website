@@ -11,6 +11,13 @@ from application.use_cases.artist.get_artist import GetArtist
 from application.use_cases.artist.create_artist import CreateArtist
 from application.use_cases.artist.update_artist import UpdateArtist
 from application.use_cases.artist.delete_artist import DeleteArtist
+from application.ports.release_repository import ReleaseRepositoryPort
+from infrastructure.database.repositories.release_repository import ReleaseRepository
+from application.use_cases.release.create_release import CreateRelease
+from application.use_cases.release.get_release import GetRelease
+from application.use_cases.release.list_releases import ListReleases
+from application.use_cases.release.update_release import UpdateRelease
+from application.use_cases.release.delete_release import DeleteRelease
 
 
 
@@ -47,3 +54,34 @@ def get_delete_artist_use_case(
     repository: ArtistRepositoryPort = Depends(get_artist_repository),
 ) -> DeleteArtist:
     return DeleteArtist(repository)
+
+def get_release_repository(
+    session: AsyncSession = Depends(get_session),
+) -> ReleaseRepositoryPort:
+    return ReleaseRepository(session)
+
+
+def get_create_release_use_case(
+    repository: ReleaseRepositoryPort = Depends(get_release_repository),
+) -> CreateRelease:
+    return CreateRelease(repository)
+
+def get_release_use_case(
+    repository: ReleaseRepositoryPort = Depends(get_release_repository),
+) -> GetRelease:
+    return GetRelease(repository)
+
+def get_list_releases_use_case(
+    repository: ReleaseRepositoryPort = Depends(get_release_repository),
+) -> ListReleases:
+    return ListReleases(repository)
+
+def get_update_release_use_case(
+    repository: ReleaseRepositoryPort = Depends(get_release_repository),
+) -> UpdateRelease:
+    return UpdateRelease(repository)
+
+def get_delete_release_use_case(
+    repository: ReleaseRepositoryPort = Depends(get_release_repository),
+) -> DeleteRelease:
+    return DeleteRelease(repository)
