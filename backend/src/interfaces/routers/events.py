@@ -7,6 +7,7 @@ from application.use_cases.event.delete_event import DeleteEvent
 from application.use_cases.event.get_event import GetEvent
 from application.use_cases.event.list_events import ListEvents
 from application.use_cases.event.update_event import UpdateEvent
+from domain.models.event import Event
 from infrastructure.database.dependencies import (
     get_create_event_use_case,
     get_delete_event_use_case,
@@ -128,7 +129,7 @@ async def delete_event(
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-def _to_response(event) -> EventResponse:
+def _to_response(event: Event) -> EventResponse:
     return EventResponse(
         id=event.id,
         title=event.title,
