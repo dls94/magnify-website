@@ -1,19 +1,18 @@
 from typing import Protocol
 from uuid import UUID
 
-from domain.models import Release
+from domain.models.release import Release
 
 
 class ReleaseRepositoryPort(Protocol):
+    async def save(self, release: Release) -> Release:
+        ...
 
-    def save(self, release: Release) -> Release:
-        """Sauvegarde une sortie d'album/EP/Single."""
-        pass
+    async def get_by_id(self, release_id: UUID) -> Release | None:
+        ...
 
-    def get_by_id(self, release_id: UUID) -> Release | None:
-        """Récupère une sortie par son ID."""
-        pass
+    async def list_all(self) -> list[Release]:
+        ...
 
-    def list_by_artist(self, artist_id: UUID) -> list[Release]:
-        """Récupère toutes les sorties d'un artiste spécifique."""
-        pass
+    async def delete(self, release_id: UUID) -> bool:
+        ...

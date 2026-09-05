@@ -39,10 +39,9 @@ class Release:
     title: str
     release_type: ReleaseType
     release_date: date
-    cover_url: str | None
     id: UUID = field(default_factory=uuid4)
+    cover_url: str | None = None
     artist_id: UUID | None = None
-    cover_url: Optional[str] = None
     upc: Optional[str] = None  # Code barre produit / Universal Product Code
     spotify_url: Optional[str] = None
     tracks: List[Track] = field(default_factory=list)
@@ -83,3 +82,36 @@ class Release:
                 "Impossible de publier la release : il manque la pochette ou au moins un morceau."
             )
         self.is_published = True
+
+    def update_profile(
+            self,
+            title: str | None = None,
+            release_type: ReleaseType | None = None,
+            release_date: date | None = None,
+            cover_url: str | None = None,
+            upc: str | None = None,
+            spotify_url: str | None = None,
+            artist_id: UUID | None = None,
+    ) -> None:
+        if title is not None:
+            if not title.strip():
+                raise ValueError("Le titre de la release est obligatoire.")
+            self.title = title
+
+        if release_type is not None:
+            self.release_type = release_type
+
+        if release_date is not None:
+            self.release_date = release_date
+
+        if cover_url is not None:
+            self.cover_url = cover_url
+
+        if upc is not None:
+            self.upc = upc
+
+        if spotify_url is not None:
+            self.spotify_url = spotify_url
+
+        if artist_id is not None:
+            self.artist_id = artist_id
