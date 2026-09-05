@@ -5,19 +5,22 @@ from domain.models.event import Event
 
 
 class EventRepositoryPort(Protocol):
-
-    def save(self, event: Event) -> Event:
+    async def save(self, event: Event) -> Event:
         """Sauvegarde un événement."""
         ...
 
-    def get_by_id(self, event_id: UUID) -> Event | None:
+    async def get_by_id(self, event_id: UUID) -> Event | None:
         """Récupère un événement par son ID."""
         ...
 
-    def list_all(self) -> list[Event]:
+    async def list_all(self) -> list[Event]:
         """Récupère tous les événements."""
         ...
 
-    def list_upcoming(self) -> list[Event]:
+    async def list_upcoming(self) -> list[Event]:
         """Récupère les événements à venir."""
+        ...
+
+    async def delete(self, event_id: UUID) -> bool:
+        """Supprime un événement."""
         ...

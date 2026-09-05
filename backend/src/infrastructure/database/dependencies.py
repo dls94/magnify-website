@@ -4,12 +4,18 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.ports.artist_repository import ArtistRepositoryPort
+from application.ports.event_repository import EventRepositoryPort
 from application.ports.release_repository import ReleaseRepositoryPort
 from application.use_cases.artist.create_artist import CreateArtist
 from application.use_cases.artist.delete_artist import DeleteArtist
 from application.use_cases.artist.get_artist import GetArtist
 from application.use_cases.artist.list_artists import ListArtists
 from application.use_cases.artist.update_artist import UpdateArtist
+from application.use_cases.event.create_event import CreateEvent
+from application.use_cases.event.delete_event import DeleteEvent
+from application.use_cases.event.get_event import GetEvent
+from application.use_cases.event.list_events import ListEvents
+from application.use_cases.event.update_event import UpdateEvent
 from application.use_cases.release.create_release import CreateRelease
 from application.use_cases.release.delete_release import DeleteRelease
 from application.use_cases.release.get_release import GetRelease
@@ -17,6 +23,7 @@ from application.use_cases.release.list_releases import ListReleases
 from application.use_cases.release.update_release import UpdateRelease
 from infrastructure.database.connection import AsyncSessionLocal
 from infrastructure.database.repositories.artist_repository import ArtistRepository
+from infrastructure.database.repositories.event_repository import EventRepository
 from infrastructure.database.repositories.release_repository import ReleaseRepository
 
 
@@ -84,3 +91,37 @@ def get_delete_release_use_case(
     repository: ReleaseRepositoryPort = Depends(get_release_repository),
 ) -> DeleteRelease:
     return DeleteRelease(repository)
+
+def get_event_repository(
+    session: AsyncSession = Depends(get_session),
+) -> EventRepositoryPort:
+    return EventRepository(session)
+
+def get_create_event_use_case(
+    repository: EventRepositoryPort = Depends(get_event_repository),
+) -> CreateEvent:
+    return CreateEvent(repository)
+
+
+def get_event_use_case(
+    repository: EventRepositoryPort = Depends(get_event_repository),
+) -> GetEvent:
+    return GetEvent(repository)
+
+
+def get_list_events_use_case(
+    repository: EventRepositoryPort = Depends(get_event_repository),
+) -> ListEvents:
+    return ListEvents(repository)
+
+
+def get_update_event_use_case(
+    repository: EventRepositoryPort = Depends(get_event_repository),
+) -> UpdateEvent:
+    return UpdateEvent(repository)
+
+
+def get_delete_event_use_case(
+    repository: EventRepositoryPort = Depends(get_event_repository),
+) -> DeleteEvent:
+    return DeleteEvent(repository)

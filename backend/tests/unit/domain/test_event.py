@@ -77,3 +77,22 @@ def test_event_cannot_be_published_twice():
 
     with pytest.raises(ValueError, match="déjà publié"):
         event.publish()
+
+def test_event_requires_timezone_aware_event_date():
+    with pytest.raises(ValueError, match="date doit être timezone-aware"):
+        make_event(
+            event_date=datetime(2026, 10, 15, 20, 0), # noqa: DTZ001
+        )
+
+def test_event_can_update_profile():
+    event = make_event()
+
+    event.update_profile(
+        title="Concert Magnify Deluxe",
+        description="Nouvelle description",
+        city="Paris",
+    )
+
+    assert event.title == "Concert Magnify Deluxe"
+    assert event.description == "Nouvelle description"
+    assert event.city == "Paris"
