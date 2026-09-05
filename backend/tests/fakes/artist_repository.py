@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from domain.models.artist import Artist
 
 

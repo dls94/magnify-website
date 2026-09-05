@@ -2,8 +2,7 @@ from datetime import date
 from uuid import UUID
 
 from application.ports.release_repository import ReleaseRepositoryPort
-from domain.models.release import Release
-from domain.models.release import ReleaseType
+from domain.models.release import Release, ReleaseType
 
 
 class CreateRelease:

@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Text
@@ -6,8 +7,6 @@ from sqlalchemy.dialects.postgresql import UUID as PostgreSQLUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from infrastructure.database.base import Base
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from infrastructure.database.models.release_track import ReleaseTrackModel

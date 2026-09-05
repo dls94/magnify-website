@@ -1,5 +1,6 @@
 from datetime import date
 from uuid import uuid4
+
 from application.use_cases.release.update_release import UpdateRelease
 from domain.models.release import Release, ReleaseType
 from tests.fakes.release_repository import InMemoryReleaseRepository

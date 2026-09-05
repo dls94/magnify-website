@@ -3,7 +3,6 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
 from application.ports.artist_repository import ArtistRepositoryPort
 from domain.models.artist import Artist
 from infrastructure.database.models.artist import ArtistModel

@@ -1,5 +1,7 @@
 from uuid import UUID
+
 import pytest
+
 from application.use_cases.artist.update_artist import UpdateArtist
 from domain.models.artist import Artist
 from tests.fakes.artist_repository import InMemoryArtistRepository

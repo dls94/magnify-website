@@ -2,21 +2,19 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from application.use_cases.artist.create_artist import CreateArtist
+from application.use_cases.artist.delete_artist import DeleteArtist
 from application.use_cases.artist.get_artist import GetArtist
 from application.use_cases.artist.list_artists import ListArtists
+from application.use_cases.artist.update_artist import UpdateArtist
 from infrastructure.database.dependencies import (
     get_artist_use_case,
     get_create_artist_use_case,
-    get_update_artist_use_case,
+    get_delete_artist_use_case,
     get_list_artists_use_case,
-    get_delete_artist_use_case
+    get_update_artist_use_case,
 )
-from application.use_cases.artist.create_artist import CreateArtist
-from application.use_cases.artist.update_artist import UpdateArtist
-from application.use_cases.artist.delete_artist import DeleteArtist
-
-from interfaces.schemas.artists import ArtistCreate
-from interfaces.schemas.artists import ArtistResponse, ArtistUpdate
+from interfaces.schemas.artists import ArtistCreate, ArtistResponse, ArtistUpdate
 
 router = APIRouter(
     prefix="/api/v1/artists",

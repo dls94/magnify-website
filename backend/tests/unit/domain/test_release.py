@@ -1,6 +1,8 @@
-import pytest
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from uuid import UUID
+
+import pytest
+
 from domain.models.release import Release, ReleaseType, Track
 
 ARTIST_ID = UUID("12345678-1234-5678-1234-567812345678")
@@ -136,4 +138,4 @@ def test_release_has_timezone_aware_creation_date():
     release = make_release()
 
     assert isinstance(release.created_at, datetime)
-    assert release.created_at.tzinfo == timezone.utc
+    assert release.created_at.tzinfo == UTC

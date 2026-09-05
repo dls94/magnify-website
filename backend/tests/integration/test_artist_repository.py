@@ -1,10 +1,12 @@
+from uuid import uuid4
+
 from sqlalchemy import select
 
 from domain.models.artist import Artist
 from infrastructure.database.connection import AsyncSessionLocal
 from infrastructure.database.models.artist import ArtistModel
 from infrastructure.database.repositories.artist_repository import ArtistRepository
-from uuid import uuid4
+
 
 async def test_save_artist_persists_artist_in_database():
     artist = Artist(

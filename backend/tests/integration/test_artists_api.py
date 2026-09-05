@@ -2,10 +2,11 @@ from uuid import uuid4
 
 from fastapi.testclient import TestClient
 
+from domain.models.artist import Artist
 from infrastructure.database.connection import AsyncSessionLocal
 from infrastructure.database.repositories.artist_repository import ArtistRepository
 from main import app
-from domain.models.artist import Artist
+
 
 def test_list_artists_returns_artists():
     with TestClient(app) as client:

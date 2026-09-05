@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from domain.models.artist import Artist
 from application.use_cases.artist.get_artist import GetArtist
+from domain.models.artist import Artist
 from tests.fakes.artist_repository import InMemoryArtistRepository
 
 

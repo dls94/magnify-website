@@ -1,21 +1,21 @@
-from fastapi import APIRouter, Depends, HTTPException, status
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, HTTPException, status
+
 from application.use_cases.release.create_release import CreateRelease
+from application.use_cases.release.delete_release import DeleteRelease
 from application.use_cases.release.get_release import GetRelease
 from application.use_cases.release.list_releases import ListReleases
 from application.use_cases.release.update_release import UpdateRelease
-from application.use_cases.release.delete_release import DeleteRelease
 from domain.models.release import Release
 from infrastructure.database.dependencies import (
     get_create_release_use_case,
-    get_release_use_case,
-    get_list_releases_use_case,
-    get_update_release_use_case,
     get_delete_release_use_case,
+    get_list_releases_use_case,
+    get_release_use_case,
+    get_update_release_use_case,
 )
 from interfaces.schemas.releases import ReleaseCreate, ReleaseResponse, ReleaseUpdate
-
 
 router = APIRouter(
     prefix="/api/v1/releases",

@@ -1,6 +1,8 @@
-import pytest
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
+
+import pytest
+
 from domain.models.event import Event, EventType
 
 
@@ -9,7 +11,7 @@ def make_event(**kwargs) -> Event:
         "title": "Concert Magnify",
         "description": "Un concert Magnify Music.",
         "event_type": EventType.CONCERT,
-        "event_date": datetime(2026, 10, 15, 20, 0, tzinfo=timezone.utc),
+        "event_date": datetime(2026, 10, 15, 20, 0, tzinfo=UTC),
     }
     defaults.update(kwargs)
     return Event(**defaults)
@@ -41,12 +43,12 @@ def test_event_has_timezone_aware_creation_date():
     event = make_event()
 
     assert isinstance(event.created_at, datetime)
-    assert event.created_at.tzinfo == timezone.utc
+    assert event.created_at.tzinfo == UTC
 
 
 def test_event_can_be_past():
     event = make_event(
-        event_date=datetime(2026, 1, 1, 20, 0, tzinfo=timezone.utc)
+        event_date=datetime(2026, 1, 1, 20, 0, tzinfo=UTC)
     )
 
     assert event.is_past() is True
@@ -54,7 +56,7 @@ def test_event_can_be_past():
 
 def test_event_can_be_future():
     event = make_event(
-        event_date=datetime(2026, 12, 1, 20, 0, tzinfo=timezone.utc)
+        event_date=datetime(2026, 12, 1, 20, 0, tzinfo=UTC)
     )
 
     assert event.is_past() is False

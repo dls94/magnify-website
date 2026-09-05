@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional
 from uuid import UUID, uuid4
 
 
@@ -21,13 +20,13 @@ class Event:
     event_date: datetime
     id: UUID = field(default_factory=uuid4)
     artist_id: UUID | None = None
-    venue_name: Optional[str] = None
-    city: Optional[str] = None
-    ticket_url: Optional[str] = None
-    cover_image_url: Optional[str] = None
+    venue_name: str | None = None
+    city: str | None = None
+    ticket_url: str | None = None
+    cover_image_url: str | None = None
     is_published: bool = False
     created_at: datetime = field(
-        default_factory=lambda: datetime.now(timezone.utc)
+        default_factory=lambda: datetime.now(UTC)
     )
 
     def __post_init__(self) -> None:
@@ -35,7 +34,7 @@ class Event:
             raise ValueError("Le titre de l'événement est obligatoire.")
 
     def is_past(self) -> bool:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         return self.event_date < now
 
     def publish(self) -> None:

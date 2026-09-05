@@ -1,18 +1,18 @@
 from dataclasses import dataclass, field
-from typing import Optional
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID, uuid4
+
 
 @dataclass
 class Artist:
 
     name: str
     id: UUID = field(default_factory=uuid4)
-    bio: Optional[str] = None
-    spotify_url: Optional[str] = None
-    instagram_url: Optional[str] = None
-    picture_url: Optional[str] = None
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    bio: str | None = None
+    spotify_url: str | None = None
+    instagram_url: str | None = None
+    picture_url: str | None = None
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     def __post_init__(self) -> None:
         if not self.name or not self.name.strip():
@@ -20,8 +20,8 @@ class Artist:
 
     def update_social_links(
             self,
-            spotify_url: Optional[str] = None,
-            instagram_url: Optional[str] = None
+            spotify_url: str | None = None,
+            instagram_url: str | None = None
     ) -> None:
         """Exemple de règle métier : mise à jour des réseaux sociaux."""
 

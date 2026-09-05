@@ -2,14 +2,10 @@ from datetime import date
 
 from fastapi.testclient import TestClient
 
-from main import app
-
-from datetime import date
-
+from domain.models.release import Release, ReleaseType
 from infrastructure.database.connection import AsyncSessionLocal
 from infrastructure.database.repositories.release_repository import ReleaseRepository
-from domain.models.release import Release, ReleaseType
-
+from main import app
 
 client = TestClient(app)
 
@@ -60,7 +56,6 @@ async def test_get_release():
     assert data["release_type"] == "SINGLE"
     assert data["release_date"] == "2026-09-01"
     assert data["cover_url"] == "https://example.com/cover.jpg"
-    ...
 
 def test_get_release_returns_404_when_not_found():
     response = client.get("/api/v1/releases/00000000-0000-0000-0000-000000000000")

@@ -1,12 +1,12 @@
 from .artist import Artist
-from .release import Release, ReleaseType, Track
 from .event import Event, EventType
+from .release import Release, ReleaseType, Track
 
 __all__ = [
     "Artist",
+    "Event",
+    "EventType",
     "Release",
     "ReleaseType",
     "Track",
-    "Event",
-    "EventType",
 ]

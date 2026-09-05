@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
-from datetime import datetime, date, timezone
+from datetime import UTC, date, datetime
 from enum import Enum
-from typing import Optional, List
 from uuid import UUID, uuid4
 
 
@@ -15,7 +14,7 @@ class ReleaseType(str, Enum):
 class Track:
     title: str
     duration_seconds: int
-    isrc: Optional[str] = None
+    isrc: str | None = None
     track_number: int = 1
 
     def __post_init__(self) -> None:
@@ -42,15 +41,15 @@ class Release:
     id: UUID = field(default_factory=uuid4)
     cover_url: str | None = None
     artist_id: UUID | None = None
-    upc: Optional[str] = None  # Code barre produit / Universal Product Code
-    spotify_url: Optional[str] = None
-    tracks: List[Track] = field(default_factory=list)
+    upc: str | None = None  # Code barre produit / Universal Product Code
+    spotify_url: str | None = None
+    tracks: list[Track] = field(default_factory=list)
     is_published: bool = False
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
     # 2. Règles Métier (Comportement de l'entité)
-    def add_track(self, title: str, duration_seconds: int, isrc: Optional[str] = None) -> None:
+    def add_track(self, title: str, duration_seconds: int, isrc: str | None = None) -> None:
         """Ajoute une piste à la sortie en incrémentant le numéro de piste."""
         track_number = len(self.tracks) + 1
         new_track = Track(

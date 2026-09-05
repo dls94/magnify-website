@@ -1,8 +1,8 @@
 from datetime import date
 
+from application.use_cases.release.create_release import CreateRelease
 from domain.models.release import ReleaseType
 from tests.fakes.release_repository import InMemoryReleaseRepository
-from application.use_cases.release.create_release import CreateRelease
 
 
 async def test_create_release_saves_release():

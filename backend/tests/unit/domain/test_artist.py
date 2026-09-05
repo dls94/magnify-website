@@ -1,10 +1,9 @@
+from datetime import UTC, datetime
 from uuid import UUID
 
 import pytest
-from datetime import datetime, timezone
+
 from domain.models.artist import Artist
-
-
 
 
 def test_artist_require_a_name():
@@ -85,7 +84,7 @@ def test_artist_has_creation_date():
     )
 
     assert isinstance(artist.created_at, datetime)
-    assert artist.created_at.tzinfo == timezone.utc
+    assert artist.created_at.tzinfo == UTC
 
 def test_artist_can_update_social_links():
     artist = Artist(

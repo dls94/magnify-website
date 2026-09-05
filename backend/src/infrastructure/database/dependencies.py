@@ -3,22 +3,21 @@ from collections.abc import AsyncGenerator
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from infrastructure.database.connection import AsyncSessionLocal
 from application.ports.artist_repository import ArtistRepositoryPort
-from infrastructure.database.repositories.artist_repository import ArtistRepository
-from application.use_cases.artist.list_artists import ListArtists
-from application.use_cases.artist.get_artist import GetArtist
-from application.use_cases.artist.create_artist import CreateArtist
-from application.use_cases.artist.update_artist import UpdateArtist
-from application.use_cases.artist.delete_artist import DeleteArtist
 from application.ports.release_repository import ReleaseRepositoryPort
-from infrastructure.database.repositories.release_repository import ReleaseRepository
+from application.use_cases.artist.create_artist import CreateArtist
+from application.use_cases.artist.delete_artist import DeleteArtist
+from application.use_cases.artist.get_artist import GetArtist
+from application.use_cases.artist.list_artists import ListArtists
+from application.use_cases.artist.update_artist import UpdateArtist
 from application.use_cases.release.create_release import CreateRelease
+from application.use_cases.release.delete_release import DeleteRelease
 from application.use_cases.release.get_release import GetRelease
 from application.use_cases.release.list_releases import ListReleases
 from application.use_cases.release.update_release import UpdateRelease
-from application.use_cases.release.delete_release import DeleteRelease
-
+from infrastructure.database.connection import AsyncSessionLocal
+from infrastructure.database.repositories.artist_repository import ArtistRepository
+from infrastructure.database.repositories.release_repository import ReleaseRepository
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:

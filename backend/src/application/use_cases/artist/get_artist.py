@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from domain.models.artist import Artist
 from application.ports.artist_repository import ArtistRepositoryPort
+from domain.models.artist import Artist
 
 
 class GetArtist:
