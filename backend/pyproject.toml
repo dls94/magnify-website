@@ -29,3 +29,6 @@ ignore = ["B008"]
 
 [tool.ruff]
 extend-exclude = ["alembic/versions"]
+
+[tool.ruff.lint.per-file-ignores]
+"alembic/env.py" = ["I001"]

@@ -1,15 +1,12 @@
 import os
-import sys
 from logging.config import fileConfig
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-
-
+from alembic import context
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
-from alembic import context
+
+from infrastructure.database import models  # noqa: F401
 from infrastructure.database.base import Base
 
 load_dotenv()
