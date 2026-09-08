@@ -8,6 +8,7 @@ from application.use_cases.release.get_release import GetRelease
 from application.use_cases.release.list_releases import ListReleases
 from application.use_cases.release.update_release import UpdateRelease
 from domain.models.release import Release
+from domain.models.user import User
 from infrastructure.database.dependencies import (
     get_create_release_use_case,
     get_delete_release_use_case,
@@ -15,6 +16,7 @@ from infrastructure.database.dependencies import (
     get_release_use_case,
     get_update_release_use_case,
 )
+from infrastructure.security.admin_access import require_admin
 from interfaces.schemas.releases import ReleaseCreate, ReleaseResponse, ReleaseUpdate
 
 router = APIRouter(
@@ -31,6 +33,8 @@ router = APIRouter(
 async def create_release(
     data: ReleaseCreate,
     use_case: CreateRelease = Depends(get_create_release_use_case),
+    _: User = Depends(require_admin),
+
 ) -> Release:
     try:
         return await use_case.execute(
@@ -81,6 +85,8 @@ async def update_release(
     release_id: UUID,
     data: ReleaseUpdate,
     use_case: UpdateRelease = Depends(get_update_release_use_case),
+    _: User = Depends(require_admin),
+
 ) -> Release:
     try:
         release = await use_case.execute(
@@ -114,6 +120,8 @@ async def update_release(
 async def delete_release(
     release_id: UUID,
     use_case: DeleteRelease = Depends(get_delete_release_use_case),
+    _: User = Depends(require_admin),
+
 ) -> None:
     deleted = await use_case.execute(release_id)
 
