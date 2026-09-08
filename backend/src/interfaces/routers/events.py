@@ -8,6 +8,7 @@ from application.use_cases.event.get_event import GetEvent
 from application.use_cases.event.list_events import ListEvents
 from application.use_cases.event.update_event import UpdateEvent
 from domain.models.event import Event
+from domain.models.user import User
 from infrastructure.database.dependencies import (
     get_create_event_use_case,
     get_delete_event_use_case,
@@ -15,6 +16,7 @@ from infrastructure.database.dependencies import (
     get_list_events_use_case,
     get_update_event_use_case,
 )
+from infrastructure.security.admin_access import require_admin
 from interfaces.schemas.events import EventCreate, EventResponse, EventUpdate
 
 router = APIRouter(prefix="/api/v1/events", tags=["events"])
@@ -28,6 +30,7 @@ router = APIRouter(prefix="/api/v1/events", tags=["events"])
 async def create_event(
     data: EventCreate,
     use_case: CreateEvent = Depends(get_create_event_use_case),
+    _: User = Depends(require_admin),
 ) -> EventResponse:
     try:
         event = await use_case.execute(
@@ -93,6 +96,7 @@ async def update_event(
     event_id: UUID,
     data: EventUpdate,
     use_case: UpdateEvent = Depends(get_update_event_use_case),
+    _: User = Depends(require_admin),
 ) -> EventResponse:
     try:
         event = await use_case.execute(
@@ -120,6 +124,7 @@ async def update_event(
 async def delete_event(
     event_id: UUID,
     use_case: DeleteEvent = Depends(get_delete_event_use_case),
+    _: User = Depends(require_admin),
 ) -> Response:
     deleted = await use_case.execute(event_id)
 
