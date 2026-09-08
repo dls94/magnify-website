@@ -1,12 +1,13 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from application.use_cases.artist.create_artist import CreateArtist
 from application.use_cases.artist.delete_artist import DeleteArtist
 from application.use_cases.artist.get_artist import GetArtist
 from application.use_cases.artist.list_artists import ListArtists
 from application.use_cases.artist.update_artist import UpdateArtist
+from domain.models.user import User
 from infrastructure.database.dependencies import (
     get_artist_use_case,
     get_create_artist_use_case,
@@ -14,6 +15,7 @@ from infrastructure.database.dependencies import (
     get_list_artists_use_case,
     get_update_artist_use_case,
 )
+from infrastructure.security.admin_access import require_admin
 from interfaces.schemas.artists import ArtistCreate, ArtistResponse, ArtistUpdate
 
 router = APIRouter(
@@ -43,10 +45,11 @@ async def get_artist(
 
     return artist
 
-@router.post("", response_model=ArtistResponse, status_code=201)
+@router.post("", response_model=ArtistResponse, status_code=status.HTTP_201_CREATED)
 async def create_artist(
     payload: ArtistCreate,
     use_case: CreateArtist = Depends(get_create_artist_use_case),
+    _: User = Depends(require_admin),
 ) -> ArtistResponse:
     try:
         return await use_case.execute(
@@ -62,11 +65,12 @@ async def create_artist(
             detail=str(exc),
         ) from exc
 
-@router.patch("/{artist_id}", response_model=ArtistResponse)
+@router.patch("/{artist_id}", response_model=ArtistResponse, status_code=status.HTTP_200_OK)
 async def update_artist(
     artist_id: UUID,
     payload: ArtistUpdate,
     use_case: UpdateArtist = Depends(get_update_artist_use_case),
+    _: User = Depends(require_admin),
 ) -> ArtistResponse:
     artist = await use_case.execute(
         artist_id=artist_id,
@@ -85,10 +89,11 @@ async def update_artist(
 
     return artist
 
-@router.delete("/{artist_id}", status_code=204)
+@router.delete("/{artist_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_artist(
     artist_id: UUID,
     use_case: DeleteArtist = Depends(get_delete_artist_use_case),
+    _: User = Depends(require_admin),
 ) -> None:
     deleted = await use_case.execute(artist_id)
 

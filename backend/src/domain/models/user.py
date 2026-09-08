@@ -6,6 +6,7 @@ from uuid import UUID, uuid4
 
 class UserRole(str, Enum):
     ADMIN = "ADMIN"
+    ARTIST = "ARTIST"
 
 
 @dataclass
@@ -14,6 +15,7 @@ class User:
     password_hash: str
     role: UserRole = UserRole.ADMIN
     id: UUID = field(default_factory=uuid4)
+    artist_id: UUID | None = None
     is_active: bool = True
     created_at: datetime = field(
         default_factory=lambda: datetime.now(UTC)
@@ -28,6 +30,9 @@ class User:
 
         if not self.password_hash:
             raise ValueError("Le mot de passe hashé est obligatoire.")
+
+        if self.role == UserRole.ARTIST and self.artist_id is None:
+            raise ValueError("Un utilisateur ARTIST doit être associé à un artiste.")
 
     def deactivate(self) -> None:
         if not self.is_active:

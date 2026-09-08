@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from application.ports.artist_repository import ArtistRepositoryPort
 from application.ports.event_repository import EventRepositoryPort
 from application.ports.release_repository import ReleaseRepositoryPort
+from application.ports.user_repository import UserRepositoryPort
 from application.use_cases.artist.create_artist import CreateArtist
 from application.use_cases.artist.delete_artist import DeleteArtist
 from application.use_cases.artist.get_artist import GetArtist
@@ -21,10 +22,15 @@ from application.use_cases.release.delete_release import DeleteRelease
 from application.use_cases.release.get_release import GetRelease
 from application.use_cases.release.list_releases import ListReleases
 from application.use_cases.release.update_release import UpdateRelease
+from application.use_cases.user.authenticate_user import AuthenticateUser
+from infrastructure.config import Settings
 from infrastructure.database.connection import AsyncSessionLocal
 from infrastructure.database.repositories.artist_repository import ArtistRepository
 from infrastructure.database.repositories.event_repository import EventRepository
 from infrastructure.database.repositories.release_repository import ReleaseRepository
+from infrastructure.database.repositories.user_repository import UserRepository
+from infrastructure.security.argon2_password_hasher import Argon2PasswordHasher
+from infrastructure.security.jwt_token_provider import JwtTokenProvider
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
@@ -125,3 +131,26 @@ def get_delete_event_use_case(
     repository: EventRepositoryPort = Depends(get_event_repository),
 ) -> DeleteEvent:
     return DeleteEvent(repository)
+
+def get_token_provider() -> JwtTokenProvider:
+    settings = Settings()
+
+    return JwtTokenProvider(
+        secret_key=settings.jwt_secret_key,
+        access_token_expire_minutes=settings.access_token_expire_minutes,
+    )
+
+def get_user_repository(
+    session: AsyncSession = Depends(get_session),
+) -> UserRepositoryPort:
+    return UserRepository(session)
+
+def get_authenticate_user(
+    repository: UserRepositoryPort = Depends(get_user_repository),
+) -> AuthenticateUser:
+    password_hasher = Argon2PasswordHasher()
+
+    return AuthenticateUser(
+        repository=repository,
+        password_hasher=password_hasher,
+    )

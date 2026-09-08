@@ -14,6 +14,7 @@ class UserRepository:
     async def save(self, user: User) -> User:
         model = UserModel(
             id=user.id,
+            artist_id=user.artist_id,
             email=user.email,
             password_hash=user.password_hash,
             role=user.role.value,
@@ -68,6 +69,7 @@ class UserRepository:
     def _to_domain(model: UserModel) -> User:
         return User(
             id=model.id,
+            artist_id=model.artist_id,
             email=model.email,
             password_hash=model.password_hash,
             role=UserRole(model.role),

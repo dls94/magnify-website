@@ -2,9 +2,11 @@ from uuid import uuid4
 
 from sqlalchemy import select
 
+from domain.models.artist import Artist
 from domain.models.user import User, UserRole
 from infrastructure.database.connection import AsyncSessionLocal
 from infrastructure.database.models.user import UserModel
+from infrastructure.database.repositories.artist_repository import ArtistRepository
 from infrastructure.database.repositories.user_repository import UserRepository
 
 
@@ -86,10 +88,12 @@ async def test_list_all_returns_all_users():
     user_one = User(
         email=f"admin-{uuid4()}@magnify.music",
         password_hash="hash-one",
+        role=UserRole.ADMIN,
     )
     user_two = User(
         email=f"admin-{uuid4()}@magnify.music",
         password_hash="hash-two",
+        role=UserRole.ADMIN,
     )
 
     async with AsyncSessionLocal() as session:
@@ -163,3 +167,34 @@ async def test_delete_returns_false_when_user_does_not_exist():
         deleted = await repository.delete(uuid4())
 
     assert deleted is False
+
+async def test_save_and_get_artist_user_with_artist_id():
+    artist = Artist(
+        name=f"Test Artist {uuid4()}",
+    )
+
+    async with AsyncSessionLocal() as session:
+        artist_repository = ArtistRepository(session)
+        await artist_repository.save(artist)
+
+    user = User(
+        email=f"artist-{uuid4()}@magnify.music",
+        password_hash="hashed-password",
+        role=UserRole.ARTIST,
+        artist_id=artist.id,
+    )
+
+    async with AsyncSessionLocal() as session:
+        user_repository = UserRepository(session)
+
+        await user_repository.save(user)
+
+    async with AsyncSessionLocal() as session:
+        user_repository = UserRepository(session)
+
+        result = await user_repository.get_by_id(user.id)
+
+    assert result is not None
+    assert result.id == user.id
+    assert result.role == UserRole.ARTIST
+    assert result.artist_id == artist.id
