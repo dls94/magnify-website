@@ -13,6 +13,7 @@ class UpdateUser:
         user_id: UUID,
         email: str | None = None,
         role: UserRole | None = None,
+        artist_id: UUID | None = None,
         is_active: bool | None = None,
     ) -> User | None:
         user = await self.repository.get_by_id(user_id)
@@ -27,8 +28,18 @@ class UpdateUser:
                 raise ValueError("L'email est invalide.")
             user.email = email
 
-        if role is not None:
-            user.role = role
+        target_role = role if role is not None else user.role
+
+        if target_role == UserRole.ARTIST:
+            if artist_id is not None:
+                user.artist_id = artist_id
+            elif user.artist_id is None:
+                raise ValueError("Un utilisateur ARTIST doit être associé à un artiste.")
+
+        elif target_role == UserRole.ADMIN and role == UserRole.ADMIN:
+                user.artist_id = artist_id
+
+        user.role = target_role
 
         if is_active is not None:
             if is_active and not user.is_active:

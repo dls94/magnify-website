@@ -23,6 +23,11 @@ from application.use_cases.release.get_release import GetRelease
 from application.use_cases.release.list_releases import ListReleases
 from application.use_cases.release.update_release import UpdateRelease
 from application.use_cases.user.authenticate_user import AuthenticateUser
+from application.use_cases.user.create_user import CreateUser
+from application.use_cases.user.delete_user import DeleteUser
+from application.use_cases.user.get_user import GetUser
+from application.use_cases.user.list_users import ListUsers
+from application.use_cases.user.update_user import UpdateUser
 from infrastructure.config import Settings
 from infrastructure.database.connection import AsyncSessionLocal
 from infrastructure.database.repositories.artist_repository import ArtistRepository
@@ -154,3 +159,31 @@ def get_authenticate_user(
         repository=repository,
         password_hasher=password_hasher,
     )
+
+def get_create_user_use_case(
+    repository: UserRepositoryPort = Depends(get_user_repository),
+) -> CreateUser:
+    return CreateUser(repository)
+
+def get_password_hasher() -> Argon2PasswordHasher:
+    return Argon2PasswordHasher()
+
+def get_list_users_use_case(
+    repository: UserRepositoryPort = Depends(get_user_repository),
+) -> ListUsers:
+    return ListUsers(repository)
+
+def get_get_user_use_case(
+    repository: UserRepositoryPort = Depends(get_user_repository),
+) -> GetUser:
+    return GetUser(repository)
+
+def get_update_user_use_case(
+    repository: UserRepositoryPort = Depends(get_user_repository),
+) -> UpdateUser:
+    return UpdateUser(repository)
+
+def get_delete_user_use_case(
+    repository: UserRepositoryPort = Depends(get_user_repository),
+) -> DeleteUser:
+    return DeleteUser(repository)
