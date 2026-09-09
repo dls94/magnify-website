@@ -112,3 +112,30 @@ async def test_get_current_user_returns_none_for_inactive_user():
     )
 
     assert result is None
+
+@pytest.mark.asyncio
+async def test_get_current_user_ignores_role_from_token():
+    user = User(
+        id=uuid4(),
+        email="artist@magnify.music",
+        password_hash="hashed-password",
+        role=UserRole.ARTIST,
+        artist_id=uuid4(),
+    )
+
+    token_provider = FakeTokenProvider(
+        {
+            "sub": str(user.id),
+            "role": "ADMIN",
+        }
+    )
+    repository = FakeUserRepository(user)
+
+    result = await get_current_user(
+        token="forged-admin-token",
+        token_provider=token_provider,
+        repository=repository,
+    )
+
+    assert result == user
+    assert result.role == UserRole.ARTIST

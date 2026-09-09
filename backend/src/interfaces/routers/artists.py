@@ -8,6 +8,7 @@ from application.use_cases.artist.delete_artist import DeleteArtist
 from application.use_cases.artist.get_artist import GetArtist
 from application.use_cases.artist.list_artists import ListArtists
 from application.use_cases.artist.update_artist import UpdateArtist
+from domain.models.artist import Artist
 from domain.models.user import User
 from infrastructure.database.dependencies import (
     get_artist_use_case,
@@ -28,14 +29,14 @@ router = APIRouter(
 @router.get("")
 async def list_artists(
     use_case: ListArtists = Depends(get_list_artists_use_case),
-) -> list[ArtistResponse]:
+) -> list[Artist]:
     return await use_case.execute()
 
 @router.get("/{artist_id}", response_model=ArtistResponse)
 async def get_artist(
     artist_id: UUID,
     use_case: GetArtist = Depends(get_artist_use_case),
-) -> ArtistResponse:
+) -> Artist:
     artist = await use_case.execute(artist_id)
 
     if artist is None:
@@ -51,14 +52,26 @@ async def create_artist(
     payload: ArtistCreate,
     use_case: CreateArtist = Depends(get_create_artist_use_case),
     _: User = Depends(require_admin),
-) -> ArtistResponse:
+) -> Artist:
     try:
         return await use_case.execute(
             name=payload.name,
             bio=payload.bio,
-            spotify_url=payload.spotify_url,
-            instagram_url=payload.instagram_url,
-            picture_url=payload.picture_url,
+            spotify_url=(
+                str(payload.spotify_url)
+                if payload.spotify_url is not None
+                else None
+            ),
+            instagram_url=(
+                str(payload.instagram_url)
+                if payload.instagram_url is not None
+                else None
+            ),
+            picture_url=(
+                str(payload.picture_url)
+                if payload.picture_url is not None
+                else None
+            ),
         )
     except ValueError as exc:
         raise HTTPException(
@@ -72,14 +85,26 @@ async def update_artist(
     payload: ArtistUpdate,
     use_case: UpdateArtist = Depends(get_update_artist_use_case),
     _: User = Depends(require_admin),
-) -> ArtistResponse:
+) -> Artist:
     artist = await use_case.execute(
         artist_id=artist_id,
         name=payload.name,
         bio=payload.bio,
-        picture_url=payload.picture_url,
-        spotify_url=payload.spotify_url,
-        instagram_url=payload.instagram_url,
+        spotify_url=(
+            str(payload.spotify_url)
+            if payload.spotify_url is not None
+            else None
+        ),
+        instagram_url=(
+            str(payload.instagram_url)
+            if payload.instagram_url is not None
+            else None
+        ),
+        picture_url=(
+            str(payload.picture_url)
+            if payload.picture_url is not None
+            else None
+        ),
     )
 
     if artist is None:

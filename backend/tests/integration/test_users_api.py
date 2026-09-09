@@ -603,3 +603,97 @@ def test_delete_artist_returns_409_when_referenced_by_release(
     assert response.json() == {
         "detail": "Impossible de supprimer un artiste associé à des données existantes."
     }
+
+def test_create_user_rejects_blank_password(authenticated_admin):
+    response = client.post(
+        "/api/v1/users",
+        json={
+            "email": f"user-{uuid4()}@magnify.music",
+            "password": "",
+            "role": "ADMIN",
+        },
+    )
+
+    assert response.status_code == 422
+
+def test_create_user_rejects_invalid_email(authenticated_admin):
+    response = client.post(
+        "/api/v1/users",
+        json={
+            "email": "not-an-email",
+            "password": "password123",
+            "role": "ADMIN",
+        },
+    )
+
+    assert response.status_code == 422
+
+def test_update_user_rejects_invalid_email(authenticated_admin):
+    email = f"user-{uuid4()}@magnify.music"
+
+    create_response = client.post(
+        "/api/v1/users",
+        json={
+            "email": email,
+            "password": "password123",
+            "role": "ADMIN",
+        },
+    )
+
+    assert create_response.status_code == 201
+
+    user_id = create_response.json()["id"]
+
+    response = client.patch(
+        f"/api/v1/users/{user_id}",
+        json={"email": "not-an-email"},
+    )
+
+    assert response.status_code == 422
+
+def test_update_user_rejects_blank_email(authenticated_admin):
+    email = f"user-{uuid4()}@magnify.music"
+
+    create_response = client.post(
+        "/api/v1/users",
+        json={
+            "email": email,
+            "password": "password123",
+            "role": "ADMIN",
+        },
+    )
+
+    assert create_response.status_code == 201
+
+    user_id = create_response.json()["id"]
+
+    response = client.patch(
+        f"/api/v1/users/{user_id}",
+        json={"email": ""},
+    )
+
+    assert response.status_code == 422
+
+def test_update_user_accepts_empty_payload(authenticated_admin):
+    email = f"user-{uuid4()}@magnify.music"
+
+    create_response = client.post(
+        "/api/v1/users",
+        json={
+            "email": email,
+            "password": "password123",
+            "role": "ADMIN",
+        },
+    )
+
+    assert create_response.status_code == 201
+
+    user_id = create_response.json()["id"]
+
+    response = client.patch(
+        f"/api/v1/users/{user_id}",
+        json={},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["email"] == email

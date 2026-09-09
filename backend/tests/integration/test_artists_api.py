@@ -10,6 +10,7 @@ from infrastructure.database.repositories.artist_repository import ArtistReposit
 from infrastructure.security.dependencies import get_authenticated_user
 from main import app
 
+client = TestClient(app)
 
 @pytest.fixture
 def authenticated_admin():
@@ -324,3 +325,116 @@ def test_artist_cannot_delete_artist():
         }
     finally:
         app.dependency_overrides.clear()
+
+def test_create_artist_rejects_empty_name(authenticated_admin):
+    response = client.post(
+        "/api/v1/artists",
+        json={"name": ""},
+    )
+
+    assert response.status_code == 422
+
+def test_update_artist_rejects_empty_name(authenticated_admin):
+    with TestClient(app) as client:
+        create_response = client.post(
+            "/api/v1/artists",
+            json={"name": "Artist to update"},
+        )
+
+        assert create_response.status_code == 201
+
+        artist_id = create_response.json()["id"]
+
+        response = client.patch(
+            f"/api/v1/artists/{artist_id}",
+            json={"name": ""},
+        )
+
+    assert response.status_code == 422
+
+def test_create_artist_rejects_invalid_spotify_url(authenticated_admin):
+    response = client.post(
+        "/api/v1/artists",
+        json={
+            "name": "Invalid Spotify Artist",
+            "spotify_url": "not-a-url",
+        },
+    )
+
+    assert response.status_code == 422
+
+def test_update_artist_rejects_invalid_spotify_url(authenticated_admin):
+    with TestClient(app) as client:
+        create_response = client.post(
+            "/api/v1/artists",
+            json={"name": "Spotify URL Artist"},
+        )
+
+        assert create_response.status_code == 201
+
+        artist_id = create_response.json()["id"]
+
+        response = client.patch(
+            f"/api/v1/artists/{artist_id}",
+            json={"spotify_url": "not-a-url"},
+        )
+
+    assert response.status_code == 422
+
+def test_create_artist_rejects_invalid_instagram_url(authenticated_admin):
+    response = client.post(
+        "/api/v1/artists",
+        json={
+            "name": "Invalid Instagram Artist",
+            "instagram_url": "not-a-url",
+        },
+    )
+
+    assert response.status_code == 422
+
+def test_update_artist_rejects_invalid_instagram_url(authenticated_admin):
+    with TestClient(app) as client:
+        create_response = client.post(
+            "/api/v1/artists",
+            json={"name": "Instagram URL Artist"},
+        )
+
+        assert create_response.status_code == 201
+
+        artist_id = create_response.json()["id"]
+
+        response = client.patch(
+            f"/api/v1/artists/{artist_id}",
+            json={"instagram_url": "not-a-url"},
+        )
+
+    assert response.status_code == 422
+
+def test_create_artist_rejects_invalid_picture_url(authenticated_admin):
+    response = client.post(
+        "/api/v1/artists",
+        json={
+            "name": "Invalid Picture Artist",
+            "picture_url": "not-a-url",
+        },
+    )
+
+    assert response.status_code == 422
+
+def test_update_artist_rejects_invalid_picture_url(authenticated_admin):
+    with TestClient(app) as client:
+        create_response = client.post(
+            "/api/v1/artists",
+            json={"name": "Picture URL Artist"},
+        )
+
+        assert create_response.status_code == 201
+
+        artist_id = create_response.json()["id"]
+
+        response = client.patch(
+            f"/api/v1/artists/{artist_id}",
+            json={"picture_url": "not-a-url"},
+        )
+
+    assert response.status_code == 422

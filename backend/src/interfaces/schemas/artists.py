@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, HttpUrl
 
 
 class ArtistResponse(BaseModel):
@@ -12,15 +12,15 @@ class ArtistResponse(BaseModel):
     picture_url: str | None
 
 class ArtistCreate(BaseModel):
-    name: str
+    name: str = Field(min_length=1)
     bio: str | None = None
-    spotify_url: str | None = None
-    instagram_url: str | None = None
-    picture_url: str | None = None
+    spotify_url: HttpUrl | None = None
+    instagram_url: HttpUrl | None = None
+    picture_url: HttpUrl | None = None
 
 class ArtistUpdate(BaseModel):
-    name: str | None = None
+    name: str | None = Field(default=None, min_length=1)
     bio: str | None = None
-    spotify_url: str | None = None
-    instagram_url: str | None = None
-    picture_url: str | None = None
+    spotify_url: HttpUrl | None = None
+    instagram_url: HttpUrl | None = None
+    picture_url: HttpUrl | None = None
