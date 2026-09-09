@@ -4,3 +4,7 @@ class DuplicateUserEmailError(Exception):
 
 class ReferencedArtistDeletionError(Exception):
     """Raised when an artist cannot be deleted because it is referenced."""
+
+    
+class ArtistNotFoundError(Exception):
+    pass

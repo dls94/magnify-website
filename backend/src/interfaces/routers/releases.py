@@ -2,6 +2,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
+from application.exceptions import ArtistNotFoundError
 from application.use_cases.release.create_release import CreateRelease
 from application.use_cases.release.delete_release import DeleteRelease
 from application.use_cases.release.get_release import GetRelease
@@ -42,8 +43,17 @@ async def create_release(
             artist_id=data.artist_id,
             release_type=data.release_type,
             release_date=data.release_date,
-            cover_url=data.cover_url,
+            cover_url=(
+                str(data.cover_url)
+                if data.cover_url is not None
+                else None
+            ),
         )
+    except ArtistNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
     except ValueError as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -95,9 +105,17 @@ async def update_release(
             artist_id=data.artist_id,
             release_type=data.release_type,
             release_date=data.release_date,
-            cover_url=data.cover_url,
+            cover_url=(
+                str(data.cover_url)
+                if data.cover_url is not None
+                else None
+            ),
             upc=data.upc,
-            spotify_url=data.spotify_url,
+            spotify_url=(
+                str(data.spotify_url)
+                if data.spotify_url is not None
+                else None
+            ),
         )
     except ValueError as exc:
         raise HTTPException(

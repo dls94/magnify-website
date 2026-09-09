@@ -84,8 +84,9 @@ def get_release_repository(
 
 def get_create_release_use_case(
     repository: ReleaseRepositoryPort = Depends(get_release_repository),
+    artist_repository: ArtistRepositoryPort = Depends(get_artist_repository),
 ) -> CreateRelease:
-    return CreateRelease(repository)
+    return CreateRelease(repository, artist_repository)
 
 def get_release_use_case(
     repository: ReleaseRepositoryPort = Depends(get_release_repository),

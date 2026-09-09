@@ -321,3 +321,126 @@ def test_artist_cannot_delete_release():
         }
     finally:
         app.dependency_overrides.clear()
+
+def test_create_release_rejects_empty_title(authenticated_admin):
+    response = client.post(
+        "/api/v1/releases",
+        json={
+            "title": "",
+            "artist_id": None,
+            "release_type": "SINGLE",
+            "release_date": "2026-09-01",
+        },
+    )
+
+    assert response.status_code == 422
+
+def test_update_release_rejects_empty_title(authenticated_admin):
+    release = Release(
+        title="Release to validate",
+        release_type=ReleaseType.SINGLE,
+        release_date=date(2026, 9, 1),
+    )
+
+    async def save_release() -> None:
+        async with AsyncSessionLocal() as session:
+            repository = ReleaseRepository(session)
+            await repository.save(release)
+
+    import asyncio
+
+    asyncio.run(save_release())
+
+    response = client.patch(
+        f"/api/v1/releases/{release.id}",
+        json={"title": ""},
+    )
+
+    assert response.status_code == 422
+
+def test_create_release_rejects_invalid_cover_url(authenticated_admin):
+    response = client.post(
+        "/api/v1/releases",
+        json={
+            "title": "Invalid Cover Release",
+            "artist_id": None,
+            "release_type": "SINGLE",
+            "release_date": "2026-09-01",
+            "cover_url": "not-a-url",
+        },
+    )
+
+    assert response.status_code == 422
+
+def test_update_release_rejects_invalid_cover_url(authenticated_admin):
+    release = Release(
+        title="Release with cover",
+        release_type=ReleaseType.SINGLE,
+        release_date=date(2026, 9, 1),
+    )
+
+    async def save_release() -> None:
+        async with AsyncSessionLocal() as session:
+            repository = ReleaseRepository(session)
+            await repository.save(release)
+
+    import asyncio
+
+    asyncio.run(save_release())
+
+    response = client.patch(
+        f"/api/v1/releases/{release.id}",
+        json={"cover_url": "not-a-url"},
+    )
+
+    assert response.status_code == 422
+
+def test_update_release_rejects_invalid_spotify_url(authenticated_admin):
+    release = Release(
+        title="Release with Spotify",
+        release_type=ReleaseType.SINGLE,
+        release_date=date(2026, 9, 1),
+    )
+
+    async def save_release() -> None:
+        async with AsyncSessionLocal() as session:
+            repository = ReleaseRepository(session)
+            await repository.save(release)
+
+    import asyncio
+
+    asyncio.run(save_release())
+
+    response = client.patch(
+        f"/api/v1/releases/{release.id}",
+        json={"spotify_url": "not-a-url"},
+    )
+
+    assert response.status_code == 422
+
+def test_create_release_rejects_invalid_release_type(authenticated_admin):
+    response = client.post(
+        "/api/v1/releases",
+        json={
+            "title": "Invalid Type Release",
+            "artist_id": None,
+            "release_type": "INVALID",
+            "release_date": "2026-09-01",
+        },
+    )
+
+    assert response.status_code == 422
+
+def test_create_release_rejects_unknown_artist(authenticated_admin):
+    response = client.post(
+        "/api/v1/releases",
+        json={
+            "title": "Release Unknown Artist",
+            "artist_id": str(uuid4()),
+            "release_type": "SINGLE",
+            "release_date": "2026-09-01",
+        },
+    )
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Artist not found"}
