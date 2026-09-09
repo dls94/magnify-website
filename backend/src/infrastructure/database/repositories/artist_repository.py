@@ -1,8 +1,10 @@
 from uuid import UUID
 
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from application.exceptions import ReferencedArtistDeletionError
 from application.ports.artist_repository import ArtistRepositoryPort
 from domain.models.artist import Artist
 from infrastructure.database.models.artist import ArtistModel
@@ -92,6 +94,12 @@ class ArtistRepository(ArtistRepositoryPort):
             return False
 
         await self.session.delete(artist_model)
-        await self.session.commit()
+
+        try:
+            await self.session.commit()
+        except IntegrityError as exc:
+            await self.session.rollback()
+
+            raise ReferencedArtistDeletionError from exc
 
         return True

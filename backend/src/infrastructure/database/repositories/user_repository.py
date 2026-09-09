@@ -1,8 +1,10 @@
 from uuid import UUID
 
 from sqlalchemy import delete, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from application.exceptions import DuplicateUserEmailError
 from domain.models.user import User, UserRole
 from infrastructure.database.models.user import UserModel
 
@@ -22,8 +24,16 @@ class UserRepository:
             created_at=user.created_at,
         )
 
-        await self.session.merge(model)
-        await self.session.commit()
+        try:
+            await self.session.merge(model)
+            await self.session.commit()
+        except IntegrityError as exc:
+            await self.session.rollback()
+
+            if "users_email_key" in str(exc.orig):
+                raise DuplicateUserEmailError from exc
+
+            raise
 
         return user
 

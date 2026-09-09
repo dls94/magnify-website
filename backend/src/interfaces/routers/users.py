@@ -2,6 +2,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 
+from application.exceptions import DuplicateUserEmailError
 from application.use_cases.user.create_user import CreateUser
 from application.use_cases.user.delete_user import DeleteUser
 from application.use_cases.user.get_user import GetUser
@@ -36,6 +37,11 @@ async def create_user(
             role=data.role,
             artist_id=data.artist_id,
         )
+    except DuplicateUserEmailError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Un utilisateur avec cet email existe déjà.",
+        ) from exc
     except ValueError as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -105,6 +111,11 @@ async def update_user(
             artist_id=data.artist_id,
             is_active=data.is_active,
         )
+    except DuplicateUserEmailError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Un utilisateur avec cet email existe déjà.",
+        ) from exc
     except ValueError as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

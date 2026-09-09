@@ -2,6 +2,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
+from application.exceptions import ReferencedArtistDeletionError
 from application.use_cases.artist.create_artist import CreateArtist
 from application.use_cases.artist.delete_artist import DeleteArtist
 from application.use_cases.artist.get_artist import GetArtist
@@ -95,10 +96,19 @@ async def delete_artist(
     use_case: DeleteArtist = Depends(get_delete_artist_use_case),
     _: User = Depends(require_admin),
 ) -> None:
-    deleted = await use_case.execute(artist_id)
+    try:
+        deleted = await use_case.execute(artist_id)
+    except ReferencedArtistDeletionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                "Impossible de supprimer un artiste associé "
+                "à des données existantes."
+            ),
+        ) from exc
 
     if not deleted:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="Artist not found",
         )

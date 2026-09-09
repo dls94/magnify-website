@@ -468,3 +468,138 @@ async def test_admin_gets_no_current_artist_releases(authenticated_admin):
 
     assert response.status_code == 200
     assert response.json() == []
+
+@pytest.mark.asyncio
+async def test_artist_cannot_update_another_artist_release(authenticated_artist):
+    own_artist = Artist(
+        id=authenticated_artist.artist_id,
+        name=f"Own Artist {uuid4()}",
+    )
+    other_artist = Artist(
+        id=uuid4(),
+        name=f"Other Artist {uuid4()}",
+    )
+
+    other_release = Release(
+        title=f"Other Release {uuid4()}",
+        release_type=ReleaseType.ALBUM,
+        release_date=datetime.now(UTC).date(),
+        artist_id=other_artist.id,
+    )
+
+    async with AsyncSessionLocal() as session:
+        artist_repository = ArtistRepository(session)
+        release_repository = ReleaseRepository(session)
+
+        await artist_repository.save(own_artist)
+        await artist_repository.save(other_artist)
+        await release_repository.save(other_release)
+
+    response = client.patch(
+        f"/api/v1/releases/{other_release.id}",
+        json={"title": "Hacked Release"},
+    )
+
+    assert response.status_code == 403
+
+def test_create_user_with_duplicate_email_returns_409(authenticated_admin):
+    email = f"duplicate-{uuid4()}@magnify.music"
+
+    payload = {
+        "email": email,
+        "password": "password123",
+        "role": "ADMIN",
+    }
+
+    first_response = client.post(
+        "/api/v1/users",
+        json=payload,
+    )
+
+    assert first_response.status_code == 201
+
+    second_response = client.post(
+        "/api/v1/users",
+        json=payload,
+    )
+
+    assert second_response.status_code == 409
+    assert second_response.json()["detail"] == (
+        "Un utilisateur avec cet email existe déjà."
+    )
+
+def test_update_user_with_duplicate_email_returns_409(authenticated_admin):
+    first_email = f"first-{uuid4()}@magnify.music"
+    second_email = f"second-{uuid4()}@magnify.music"
+
+    first_response = client.post(
+        "/api/v1/users",
+        json={
+            "email": first_email,
+            "password": "password123",
+            "role": "ADMIN",
+        },
+    )
+    assert first_response.status_code == 201
+
+    second_response = client.post(
+        "/api/v1/users",
+        json={
+            "email": second_email,
+            "password": "password123",
+            "role": "ADMIN",
+        },
+    )
+    assert second_response.status_code == 201
+
+    second_user_id = second_response.json()["id"]
+
+    response = client.patch(
+        f"/api/v1/users/{second_user_id}",
+        json={
+            "email": first_email,
+        },
+    )
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == (
+        "Un utilisateur avec cet email existe déjà."
+    )
+
+def test_delete_artist_returns_409_when_referenced_by_release(
+    authenticated_admin,
+):
+    artist = Artist(name="Referenced Artist")
+
+    import asyncio
+
+    async def save_artist() -> None:
+        async with AsyncSessionLocal() as session:
+            repository = ArtistRepository(session)
+            await repository.save(artist)
+
+    asyncio.run(save_artist())
+
+    release = Release(
+        title="Referenced Release",
+        release_type=ReleaseType.SINGLE,
+        release_date=datetime.now(UTC).date(),
+        artist_id=artist.id,
+    )
+
+    async def save_release() -> None:
+        async with AsyncSessionLocal() as session:
+            repository = ReleaseRepository(session)
+            await repository.save(release)
+
+    asyncio.run(save_release())
+
+    with TestClient(app) as client:
+        response = client.delete(
+            f"/api/v1/artists/{artist.id}",
+        )
+
+    assert response.status_code == 409
+    assert response.json() == {
+        "detail": "Impossible de supprimer un artiste associé à des données existantes."
+    }
