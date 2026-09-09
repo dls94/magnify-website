@@ -22,7 +22,6 @@ from interfaces.schemas.users import UserCreate, UserResponse, UserUpdate
 
 router = APIRouter(prefix="/api/v1/users", tags=["users"])
 
-
 @router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def create_user(
     data: UserCreate,
@@ -141,3 +140,4 @@ async def delete_user(
         )
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+

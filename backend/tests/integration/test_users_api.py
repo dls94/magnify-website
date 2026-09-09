@@ -1,12 +1,15 @@
+from datetime import UTC, datetime
 from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
 
 from domain.models.artist import Artist
+from domain.models.release import Release, ReleaseType
 from domain.models.user import User, UserRole
 from infrastructure.database.connection import AsyncSessionLocal
 from infrastructure.database.repositories.artist_repository import ArtistRepository
+from infrastructure.database.repositories.release_repository import ReleaseRepository
 from infrastructure.security.dependencies import get_authenticated_user
 from main import app
 
@@ -395,3 +398,73 @@ def test_artist_cannot_manage_users(
 
     assert response.status_code == 403
     assert response.json()["detail"] == "Accès administrateur requis."
+
+@pytest.mark.asyncio
+async def test_artist_can_get_own_artist(authenticated_artist):
+    artist = Artist(
+        id=authenticated_artist.artist_id,
+        name=f"Test Artist {uuid4()}",
+    )
+
+    async with AsyncSessionLocal() as session:
+        repository = ArtistRepository(session)
+        await repository.save(artist)
+
+    response = client.get("/api/v1/me/artist")
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["id"] == str(authenticated_artist.artist_id)
+    assert data["name"] == artist.name
+
+@pytest.mark.asyncio
+async def test_artist_can_get_own_releases(authenticated_artist):
+    own_artist = Artist(
+        id=authenticated_artist.artist_id,
+        name=f"Own Artist {uuid4()}",
+    )
+    other_artist = Artist(
+        id=uuid4(),
+        name=f"Other Artist {uuid4()}",
+    )
+
+    own_release = Release(
+        title=f"Own Release {uuid4()}",
+        release_type=ReleaseType.ALBUM,
+        release_date=datetime.now(UTC).date(),
+        artist_id=own_artist.id,
+    )
+    other_release = Release(
+        title=f"Other Release {uuid4()}",
+        release_type=ReleaseType.SINGLE,
+        release_date=datetime.now(UTC).date(),
+        artist_id=other_artist.id,
+    )
+
+    async with AsyncSessionLocal() as session:
+        artist_repository = ArtistRepository(session)
+        release_repository = ReleaseRepository(session)
+
+        await artist_repository.save(own_artist)
+        await artist_repository.save(other_artist)
+        await release_repository.save(own_release)
+        await release_repository.save(other_release)
+
+    response = client.get("/api/v1/me/releases")
+
+    assert response.status_code == 200
+    data = response.json()
+
+    release_ids = {item["id"] for item in data}
+
+    assert str(own_release.id) in release_ids
+    assert str(other_release.id) not in release_ids
+
+@pytest.mark.asyncio
+async def test_admin_gets_no_current_artist_releases(authenticated_admin):
+    response = client.get("/api/v1/me/releases")
+
+    assert response.status_code == 200
+    assert response.json() == []

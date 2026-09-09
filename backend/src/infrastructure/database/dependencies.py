@@ -10,6 +10,7 @@ from application.ports.user_repository import UserRepositoryPort
 from application.use_cases.artist.create_artist import CreateArtist
 from application.use_cases.artist.delete_artist import DeleteArtist
 from application.use_cases.artist.get_artist import GetArtist
+from application.use_cases.artist.get_current_artist import GetCurrentArtist
 from application.use_cases.artist.list_artists import ListArtists
 from application.use_cases.artist.update_artist import UpdateArtist
 from application.use_cases.event.create_event import CreateEvent
@@ -19,6 +20,9 @@ from application.use_cases.event.list_events import ListEvents
 from application.use_cases.event.update_event import UpdateEvent
 from application.use_cases.release.create_release import CreateRelease
 from application.use_cases.release.delete_release import DeleteRelease
+from application.use_cases.release.get_current_artist_releases import (
+    GetCurrentArtistReleases,
+)
 from application.use_cases.release.get_release import GetRelease
 from application.use_cases.release.list_releases import ListReleases
 from application.use_cases.release.update_release import UpdateRelease
@@ -187,3 +191,13 @@ def get_delete_user_use_case(
     repository: UserRepositoryPort = Depends(get_user_repository),
 ) -> DeleteUser:
     return DeleteUser(repository)
+
+def get_current_artist_use_case(
+    repository: ArtistRepositoryPort = Depends(get_artist_repository),
+) -> GetCurrentArtist:
+    return GetCurrentArtist(repository)
+
+def get_current_artist_releases_use_case(
+    repository: ReleaseRepositoryPort = Depends(get_release_repository),
+) -> GetCurrentArtistReleases:
+    return GetCurrentArtistReleases(repository)

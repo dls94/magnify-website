@@ -16,3 +16,6 @@ class ReleaseRepositoryPort(Protocol):
 
     async def delete(self, release_id: UUID) -> bool:
         ...
+
+    async def list_by_artist_id(self, artist_id: UUID) -> list[Release]:
+        ...

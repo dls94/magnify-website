@@ -156,3 +156,13 @@ class ReleaseRepository(ReleaseRepositoryPort):
         ]
 
         return release
+
+    async def list_by_artist_id(self, artist_id: UUID) -> list[Release]:
+        result = await self.session.execute(
+            select(ReleaseModel)
+            .where(ReleaseModel.artist_id == artist_id)
+            .options(selectinload(ReleaseModel.tracks))
+            .order_by(ReleaseModel.release_date.desc())
+        )
+
+        return [self._to_domain(model) for model in result.scalars().all()]
