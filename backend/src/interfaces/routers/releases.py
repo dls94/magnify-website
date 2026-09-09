@@ -103,6 +103,7 @@ async def update_release(
             release_id=release_id,
             title=data.title,
             artist_id=data.artist_id,
+            artist_id_provided="artist_id" in data.model_fields_set,
             release_type=data.release_type,
             release_date=data.release_date,
             cover_url=(
@@ -117,6 +118,11 @@ async def update_release(
                 else None
             ),
         )
+    except ArtistNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
     except ValueError as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

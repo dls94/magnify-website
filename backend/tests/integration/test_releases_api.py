@@ -4,9 +4,11 @@ from uuid import uuid4
 import pytest
 from fastapi.testclient import TestClient
 
+from domain.models.artist import Artist
 from domain.models.release import Release, ReleaseType
 from domain.models.user import User, UserRole
 from infrastructure.database.connection import AsyncSessionLocal
+from infrastructure.database.repositories.artist_repository import ArtistRepository
 from infrastructure.database.repositories.release_repository import ReleaseRepository
 from infrastructure.security.dependencies import get_authenticated_user
 from main import app
@@ -444,3 +446,111 @@ def test_create_release_rejects_unknown_artist(authenticated_admin):
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Artist not found"}
+
+async def test_update_release_rejects_unknown_artist(authenticated_admin):
+    release = Release(
+        title="Echo Urbain",
+        release_type=ReleaseType.SINGLE,
+        release_date=date(2026, 9, 1),
+    )
+
+    async with AsyncSessionLocal() as session:
+        repository = ReleaseRepository(session)
+        await repository.save(release)
+
+    response = client.patch(
+        f"/api/v1/releases/{release.id}",
+        json={
+            "artist_id": str(uuid4()),
+        },
+    )
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Artist not found"}
+
+async def test_update_release_can_clear_artist(authenticated_admin):
+    artist = Artist(
+        name="Test Artist",
+    )
+
+    release = Release(
+        title="Echo Urbain",
+        artist_id=artist.id,
+        release_type=ReleaseType.SINGLE,
+        release_date=date(2026, 9, 1),
+    )
+
+    async with AsyncSessionLocal() as session:
+        artist_repository = ArtistRepository(session)
+        release_repository = ReleaseRepository(session)
+
+        await artist_repository.save(artist)
+        await release_repository.save(release)
+
+    response = client.patch(
+        f"/api/v1/releases/{release.id}",
+        json={
+            "artist_id": None,
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["artist_id"] is None
+
+async def test_update_release_without_artist_id_keeps_existing_artist(
+    authenticated_admin,
+):
+    artist = Artist(name="Test Artist")
+
+    release = Release(
+        title="Echo Urbain",
+        artist_id=artist.id,
+        release_type=ReleaseType.SINGLE,
+        release_date=date(2026, 9, 1),
+    )
+
+    async with AsyncSessionLocal() as session:
+        artist_repository = ArtistRepository(session)
+        release_repository = ReleaseRepository(session)
+
+        await artist_repository.save(artist)
+        await release_repository.save(release)
+
+    response = client.patch(
+        f"/api/v1/releases/{release.id}",
+        json={
+            "title": "Echo Urbain Deluxe",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["artist_id"] == str(artist.id)
+
+async def test_update_release_can_change_artist(authenticated_admin):
+    current_artist = Artist(name="Current Artist")
+    new_artist = Artist(name="New Artist")
+
+    release = Release(
+        title="Echo Urbain",
+        artist_id=current_artist.id,
+        release_type=ReleaseType.SINGLE,
+        release_date=date(2026, 9, 1),
+    )
+
+    async with AsyncSessionLocal() as session:
+        artist_repository = ArtistRepository(session)
+        release_repository = ReleaseRepository(session)
+
+        await artist_repository.save(current_artist)
+        await artist_repository.save(new_artist)
+        await release_repository.save(release)
+
+    response = client.patch(
+        f"/api/v1/releases/{release.id}",
+        json={
+            "artist_id": str(new_artist.id),
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["artist_id"] == str(new_artist.id)

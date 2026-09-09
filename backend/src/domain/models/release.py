@@ -91,6 +91,7 @@ class Release:
             upc: str | None = None,
             spotify_url: str | None = None,
             artist_id: UUID | None = None,
+            artist_id_provided: bool = False,
     ) -> None:
         if title is not None:
             if not title.strip():
@@ -112,5 +113,5 @@ class Release:
         if spotify_url is not None:
             self.spotify_url = spotify_url
 
-        if artist_id is not None:
+        if artist_id_provided:
             self.artist_id = artist_id

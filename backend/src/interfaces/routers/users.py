@@ -2,7 +2,10 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 
-from application.exceptions import DuplicateUserEmailError
+from application.exceptions import (
+    ArtistNotFoundError,
+    DuplicateUserEmailError,
+)
 from application.use_cases.user.create_user import CreateUser
 from application.use_cases.user.delete_user import DeleteUser
 from application.use_cases.user.get_user import GetUser
@@ -37,6 +40,11 @@ async def create_user(
             role=data.role,
             artist_id=data.artist_id,
         )
+    except ArtistNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
     except DuplicateUserEmailError as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

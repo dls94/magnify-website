@@ -1,6 +1,8 @@
 from datetime import date
+from unittest.mock import AsyncMock
 from uuid import uuid4
 
+from application.ports.artist_repository import ArtistRepositoryPort
 from application.use_cases.release.update_release import UpdateRelease
 from domain.models.release import Release, ReleaseType
 from tests.fakes.release_repository import InMemoryReleaseRepository
@@ -19,7 +21,8 @@ async def test_update_release_updates_release():
 
     await repository.save(release)
 
-    use_case = UpdateRelease(repository)
+    artist_repository = AsyncMock(spec=ArtistRepositoryPort)
+    use_case = UpdateRelease(repository, artist_repository)
 
     result = await use_case.execute(
         release.id,
@@ -42,7 +45,8 @@ async def test_update_release_updates_release():
 
 async def test_update_release_returns_none_when_release_does_not_exist():
     repository = InMemoryReleaseRepository()
-    use_case = UpdateRelease(repository)
+    artist_repository = AsyncMock(spec=ArtistRepositoryPort)
+    use_case = UpdateRelease(repository, artist_repository)
 
     result = await use_case.execute(
         release_id=uuid4(),
@@ -50,3 +54,4 @@ async def test_update_release_returns_none_when_release_does_not_exist():
     )
 
     assert result is None
+

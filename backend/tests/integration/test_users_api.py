@@ -697,3 +697,17 @@ def test_update_user_accepts_empty_payload(authenticated_admin):
 
     assert response.status_code == 200
     assert response.json()["email"] == email
+
+def test_create_artist_user_rejects_unknown_artist(authenticated_admin):
+    response = client.post(
+        "/api/v1/users",
+        json={
+            "email": f"artist-{uuid4()}@magnify.music",
+            "password": "password",
+            "role": "ARTIST",
+            "artist_id": str(uuid4()),
+        },
+    )
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Artist not found"}

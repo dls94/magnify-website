@@ -100,8 +100,9 @@ def get_list_releases_use_case(
 
 def get_update_release_use_case(
     repository: ReleaseRepositoryPort = Depends(get_release_repository),
+    artist_repository: ArtistRepositoryPort = Depends(get_artist_repository),
 ) -> UpdateRelease:
-    return UpdateRelease(repository)
+    return UpdateRelease(repository, artist_repository)
 
 def get_delete_release_use_case(
     repository: ReleaseRepositoryPort = Depends(get_release_repository),
@@ -167,8 +168,9 @@ def get_authenticate_user(
 
 def get_create_user_use_case(
     repository: UserRepositoryPort = Depends(get_user_repository),
+    artist_repository: ArtistRepositoryPort = Depends(get_artist_repository),
 ) -> CreateUser:
-    return CreateUser(repository)
+    return CreateUser(repository, artist_repository)
 
 def get_password_hasher() -> Argon2PasswordHasher:
     return Argon2PasswordHasher()
