@@ -711,3 +711,112 @@ def test_create_artist_user_rejects_unknown_artist(authenticated_admin):
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Artist not found"}
+
+
+def test_update_user_rejects_unknown_artist(authenticated_admin):
+    email = f"user-{uuid4()}@magnify.music"
+
+    create_response = client.post(
+        "/api/v1/users",
+        json={
+            "email": email,
+            "password": "password123",
+            "role": "ADMIN",
+        },
+    )
+
+    assert create_response.status_code == 201
+    user_id = create_response.json()["id"]
+
+    response = client.patch(
+        f"/api/v1/users/{user_id}",
+        json={
+            "artist_id": str(uuid4()),
+        },
+    )
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Artist not found"}
+
+
+@pytest.mark.asyncio
+async def test_update_user_can_change_artist(
+    authenticated_admin,
+):
+    current_artist_id = uuid4()
+    new_artist_id = uuid4()
+    email = f"artist-{uuid4()}@magnify.music"
+
+    current_artist = Artist(
+        id=current_artist_id,
+        name=f"Current Artist {uuid4()}",
+    )
+    new_artist = Artist(
+        id=new_artist_id,
+        name=f"New Artist {uuid4()}",
+    )
+
+    async with AsyncSessionLocal() as session:
+        repository = ArtistRepository(session)
+        await repository.save(current_artist)
+        await repository.save(new_artist)
+
+    create_response = client.post(
+        "/api/v1/users",
+        json={
+            "email": email,
+            "password": "password123",
+            "role": "ARTIST",
+            "artist_id": str(current_artist_id),
+        },
+    )
+
+    assert create_response.status_code == 201
+    user_id = create_response.json()["id"]
+
+    response = client.patch(
+        f"/api/v1/users/{user_id}",
+        json={
+            "artist_id": str(new_artist_id),
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["artist_id"] == str(new_artist_id)
+
+@pytest.mark.asyncio
+async def test_update_artist_user_rejects_null_artist_id(authenticated_admin):
+    artist_id = uuid4()
+    email = f"artist-{uuid4()}@magnify.music"
+
+    artist = Artist(
+        id=artist_id,
+        name=f"Test Artist {uuid4()}",
+    )
+
+    async with AsyncSessionLocal() as session:
+        repository = ArtistRepository(session)
+        await repository.save(artist)
+
+    create_response = client.post(
+        "/api/v1/users",
+        json={
+            "email": email,
+            "password": "password123",
+            "role": "ARTIST",
+            "artist_id": str(artist_id),
+        },
+    )
+
+    assert create_response.status_code == 201
+    user_id = create_response.json()["id"]
+
+    response = client.patch(
+        f"/api/v1/users/{user_id}",
+        json={
+            "artist_id": None,
+        },
+    )
+
+    assert response.status_code == 400
+    assert "doit être associé" in response.json()["detail"]

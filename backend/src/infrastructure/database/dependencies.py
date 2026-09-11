@@ -187,8 +187,9 @@ def get_get_user_use_case(
 
 def get_update_user_use_case(
     repository: UserRepositoryPort = Depends(get_user_repository),
+    artist_repository: ArtistRepositoryPort = Depends(get_artist_repository),
 ) -> UpdateUser:
-    return UpdateUser(repository)
+    return UpdateUser(repository, artist_repository)
 
 def get_delete_user_use_case(
     repository: UserRepositoryPort = Depends(get_user_repository),

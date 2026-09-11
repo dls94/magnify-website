@@ -117,6 +117,7 @@ async def update_user(
             email=data.email,
             role=data.role,
             artist_id=data.artist_id,
+            artist_id_provided="artist_id" in data.model_fields_set,
             is_active=data.is_active,
         )
     except DuplicateUserEmailError as exc:
@@ -127,6 +128,11 @@ async def update_user(
     except ValueError as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+    except ArtistNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=str(exc),
         ) from exc
 
