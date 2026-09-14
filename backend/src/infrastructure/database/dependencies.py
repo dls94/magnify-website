@@ -116,8 +116,9 @@ def get_event_repository(
 
 def get_create_event_use_case(
     repository: EventRepositoryPort = Depends(get_event_repository),
+    artist_repository: ArtistRepositoryPort = Depends(get_artist_repository),
 ) -> CreateEvent:
-    return CreateEvent(repository)
+    return CreateEvent(repository, artist_repository)
 
 
 def get_event_use_case(
@@ -134,8 +135,9 @@ def get_list_events_use_case(
 
 def get_update_event_use_case(
     repository: EventRepositoryPort = Depends(get_event_repository),
+    artist_repository: ArtistRepositoryPort = Depends(get_artist_repository),
 ) -> UpdateEvent:
-    return UpdateEvent(repository)
+    return UpdateEvent(repository, artist_repository)
 
 
 def get_delete_event_use_case(

@@ -188,7 +188,7 @@ def test_get_me_returns_401_for_invalid_token():
 
 def test_get_current_user_returns_401_for_expired_token():
     token_provider = JwtTokenProvider(
-        secret_key="test-secret",
+        secret_key="test-secret-key-with-at-least-32-bytes",
         access_token_expire_minutes=1,
     )
 
@@ -198,7 +198,7 @@ def test_get_current_user_returns_401_for_expired_token():
             "iat": datetime.now(UTC) - timedelta(minutes=10),
             "exp": datetime.now(UTC) - timedelta(minutes=5),
         },
-        "test-secret",
+        "test-secret-key-with-at-least-32-bytes",
         algorithm="HS256",
     )
 
@@ -222,12 +222,12 @@ def test_get_current_user_returns_401_for_token_without_subject():
         {
             "exp": datetime.now(UTC) + timedelta(minutes=5),
         },
-        "test-secret",
+        "test-secret-key-with-at-least-32-bytes",
         algorithm="HS256",
     )
 
     token_provider = JwtTokenProvider(
-        secret_key="test-secret",
+        secret_key="test-secret-key-with-at-least-32-bytes",
         access_token_expire_minutes=60,
     )
 
@@ -249,12 +249,12 @@ def test_get_current_user_returns_401_for_invalid_subject():
             "sub": "not-a-valid-uuid",
             "exp": datetime.now(UTC) + timedelta(minutes=5),
         },
-        "test-secret",
+        "test-secret-key-with-at-least-32-bytes",
         algorithm="HS256",
     )
 
     token_provider = JwtTokenProvider(
-        secret_key="test-secret",
+        secret_key="test-secret-key-with-at-least-32-bytes",
         access_token_expire_minutes=60,
     )
 
@@ -278,12 +278,12 @@ def test_get_current_user_returns_401_for_unknown_user():
             "sub": str(user_id),
             "exp": datetime.now(UTC) + timedelta(minutes=5),
         },
-        "test-secret",
+        "test-secret-key-with-at-least-32-bytes",
         algorithm="HS256",
     )
 
     token_provider = JwtTokenProvider(
-        secret_key="test-secret",
+        secret_key="test-secret-key-with-at-least-32-bytes",
         access_token_expire_minutes=60,
     )
 
@@ -314,12 +314,12 @@ def test_get_me_uses_user_from_database_not_token_role():
             "role": "ADMIN",
             "exp": datetime.now(UTC) + timedelta(minutes=5),
         },
-        "test-secret",
+        "test-secret-key-with-at-least-32-bytes",
         algorithm="HS256",
     )
 
     token_provider = JwtTokenProvider(
-        secret_key="test-secret",
+        secret_key="test-secret-key-with-at-least-32-bytes",
         access_token_expire_minutes=60,
     )
 

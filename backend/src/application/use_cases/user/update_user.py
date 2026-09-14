@@ -57,11 +57,11 @@ class UpdateUser:
                     "Un utilisateur ARTIST doit être associé à un artiste."
                 )
 
-        elif target_role == UserRole.ADMIN:
-            if role == UserRole.ADMIN:
-                user.artist_id = artist_id
-            elif artist_id_provided:
-                user.artist_id = artist_id
+
+        elif target_role == UserRole.ADMIN and (
+                role == UserRole.ADMIN or artist_id_provided
+        ):
+            user.artist_id = artist_id
 
         user.role = target_role
 

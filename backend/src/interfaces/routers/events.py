@@ -2,6 +2,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 
+from application.exceptions import ArtistNotFoundError
 from application.use_cases.event.create_event import CreateEvent
 from application.use_cases.event.delete_event import DeleteEvent
 from application.use_cases.event.get_event import GetEvent
@@ -44,6 +45,11 @@ async def create_event(
             ticket_url=data.ticket_url,
             cover_image_url=data.cover_image_url,
         )
+    except ArtistNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -106,11 +112,17 @@ async def update_event(
             event_type=data.event_type,
             event_date=data.event_date,
             artist_id=data.artist_id,
+            artist_id_provided="artist_id" in data.model_fields_set,
             venue_name=data.venue_name,
             city=data.city,
             ticket_url=data.ticket_url,
             cover_image_url=data.cover_image_url,
         )
+    except ArtistNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 

@@ -1,13 +1,20 @@
 from datetime import datetime
 from uuid import UUID
 
+from application.exceptions import ArtistNotFoundError
+from application.ports.artist_repository import ArtistRepositoryPort
 from application.ports.event_repository import EventRepositoryPort
 from domain.models.event import Event, EventType
 
 
 class CreateEvent:
-    def __init__(self, repository: EventRepositoryPort) -> None:
+    def __init__(
+        self,
+        repository: EventRepositoryPort,
+        artist_repository: ArtistRepositoryPort,
+    ) -> None:
         self.repository = repository
+        self.artist_repository = artist_repository
 
     async def execute(
         self,
@@ -21,6 +28,12 @@ class CreateEvent:
         ticket_url: str | None = None,
         cover_image_url: str | None = None,
     ) -> Event:
+        if artist_id is not None:
+            artist = await self.artist_repository.get_by_id(artist_id)
+
+            if artist is None:
+                raise ArtistNotFoundError("Artist not found")
+
         event = Event(
             title=title,
             description=description,

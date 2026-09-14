@@ -58,6 +58,7 @@ class Event:
             event_type: EventType | None = None,
             event_date: datetime | None = None,
             artist_id: UUID | None = None,
+            artist_id_provided: bool = False,
             venue_name: str | None = None,
             city: str | None = None,
             ticket_url: str | None = None,
@@ -79,7 +80,7 @@ class Event:
                 raise ValueError("La date doit être timezone-aware.")
             self.event_date = event_date
 
-        if artist_id is not None:
+        if artist_id_provided:
             self.artist_id = artist_id
 
         if venue_name is not None:

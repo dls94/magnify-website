@@ -820,3 +820,40 @@ async def test_update_artist_user_rejects_null_artist_id(authenticated_admin):
 
     assert response.status_code == 400
     assert "doit être associé" in response.json()["detail"]
+
+@pytest.mark.asyncio
+async def test_delete_artist_returns_409_when_referenced_by_user(
+    authenticated_admin,
+):
+    artist = Artist(
+        id=uuid4(),
+        name=f"Referenced Artist {uuid4()}",
+    )
+
+    async with AsyncSessionLocal() as session:
+        artist_repository = ArtistRepository(session)
+        await artist_repository.save(artist)
+
+    create_response = client.post(
+        "/api/v1/users",
+        json={
+            "email": f"artist-{uuid4()}@magnify.music",
+            "password": "password123",
+            "role": "ARTIST",
+            "artist_id": str(artist.id),
+        },
+    )
+
+    assert create_response.status_code == 201
+
+    response = client.delete(
+        f"/api/v1/artists/{artist.id}",
+    )
+
+    assert response.status_code == 409
+    assert response.json() == {
+        "detail": (
+            "Impossible de supprimer un artiste associé "
+            "à des données existantes."
+        )
+    }

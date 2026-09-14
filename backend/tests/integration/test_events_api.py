@@ -4,9 +4,11 @@ from uuid import uuid4
 import pytest
 from fastapi.testclient import TestClient
 
+from domain.models.artist import Artist
 from domain.models.event import Event, EventType
 from domain.models.user import User, UserRole
 from infrastructure.database.connection import AsyncSessionLocal
+from infrastructure.database.repositories.artist_repository import ArtistRepository
 from infrastructure.database.repositories.event_repository import EventRepository
 from infrastructure.security.dependencies import get_authenticated_user
 from main import app
@@ -317,3 +319,196 @@ def test_artist_cannot_delete_event():
         }
     finally:
         app.dependency_overrides.clear()
+
+def test_create_event_rejects_unknown_artist(authenticated_admin):
+    response = client.post(
+        "/api/v1/events",
+        json={
+            "title": "Unknown Artist Event",
+            "description": "Test event",
+            "event_type": "CONCERT",
+            "event_date": "2026-10-01T20:00:00+00:00",
+            "location": "Paris",
+            "artist_id": str(uuid4()),
+        },
+    )
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Artist not found"}
+
+def test_update_event_rejects_unknown_artist(authenticated_admin):
+    # créer un event sans artiste
+    create_response = client.post(
+        "/api/v1/events",
+        json={
+            "title": f"Event {uuid4()}",
+            "description": "Test event",
+            "event_type": "CONCERT",
+            "event_date": "2026-10-01T20:00:00+00:00",
+        },
+    )
+
+    assert create_response.status_code == 201
+    event_id = create_response.json()["id"]
+
+    response = client.patch(
+        f"/api/v1/events/{event_id}",
+        json={
+            "artist_id": str(uuid4()),
+        },
+    )
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Artist not found"}
+
+@pytest.mark.asyncio
+async def test_update_event_can_change_artist(authenticated_admin):
+    artist_id = uuid4()
+
+    artist = Artist(
+        id=artist_id,
+        name=f"Test Artist {uuid4()}",
+    )
+
+    async with AsyncSessionLocal() as session:
+        repository = ArtistRepository(session)
+        await repository.save(artist)
+
+    create_response = client.post(
+        "/api/v1/events",
+        json={
+            "title": f"Event {uuid4()}",
+            "description": "Test event",
+            "event_type": "CONCERT",
+            "event_date": "2026-10-01T20:00:00+00:00",
+        },
+    )
+
+    assert create_response.status_code == 201
+    event_id = create_response.json()["id"]
+
+    response = client.patch(
+        f"/api/v1/events/{event_id}",
+        json={
+            "artist_id": str(artist_id),
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["artist_id"] == str(artist_id)
+
+@pytest.mark.asyncio
+async def test_update_event_without_artist_id_keeps_existing_artist(
+    authenticated_admin,
+):
+    artist_id = uuid4()
+
+    artist = Artist(
+        id=artist_id,
+        name=f"Test Artist {uuid4()}",
+    )
+
+    async with AsyncSessionLocal() as session:
+        repository = ArtistRepository(session)
+        await repository.save(artist)
+
+    create_response = client.post(
+        "/api/v1/events",
+        json={
+            "title": f"Event {uuid4()}",
+            "description": "Test event",
+            "event_type": "CONCERT",
+            "event_date": "2026-10-01T20:00:00+00:00",
+            "artist_id": str(artist_id),
+        },
+    )
+
+    assert create_response.status_code == 201
+    event_id = create_response.json()["id"]
+
+    response = client.patch(
+        f"/api/v1/events/{event_id}",
+        json={
+            "title": "Updated Event",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["artist_id"] == str(artist_id)
+
+@pytest.mark.asyncio
+async def test_update_event_can_clear_artist(
+    authenticated_admin,
+):
+    artist_id = uuid4()
+
+    artist = Artist(
+        id=artist_id,
+        name=f"Test Artist {uuid4()}",
+    )
+
+    async with AsyncSessionLocal() as session:
+        repository = ArtistRepository(session)
+        await repository.save(artist)
+
+    create_response = client.post(
+        "/api/v1/events",
+        json={
+            "title": f"Event {uuid4()}",
+            "description": "Test event",
+            "event_type": "CONCERT",
+            "event_date": "2026-10-01T20:00:00+00:00",
+            "artist_id": str(artist_id),
+        },
+    )
+
+    assert create_response.status_code == 201
+    event_id = create_response.json()["id"]
+
+    response = client.patch(
+        f"/api/v1/events/{event_id}",
+        json={
+            "artist_id": None,
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["artist_id"] is None
+
+@pytest.mark.asyncio
+async def test_delete_artist_returns_409_when_referenced_by_event(
+    authenticated_admin,
+):
+    artist = Artist(
+        id=uuid4(),
+        name=f"Referenced Artist {uuid4()}",
+    )
+
+    async with AsyncSessionLocal() as session:
+        artist_repository = ArtistRepository(session)
+        await artist_repository.save(artist)
+
+    create_response = client.post(
+        "/api/v1/events",
+        json={
+            "title": f"Referenced Event {uuid4()}",
+            "description": "Test event",
+            "event_type": "CONCERT",
+            "event_date": "2026-10-01T20:00:00+00:00",
+            "artist_id": str(artist.id),
+        },
+    )
+
+    assert create_response.status_code == 201
+
+    response = client.delete(
+        f"/api/v1/artists/{artist.id}",
+    )
+
+    assert response.status_code == 409
+    assert response.json() == {
+        "detail": (
+            "Impossible de supprimer un artiste associé "
+            "à des données existantes."
+        )
+    }
