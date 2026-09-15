@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from application.ports.token_provider import TokenProviderPort
 from application.ports.user_repository import UserRepositoryPort
@@ -14,18 +14,20 @@ from infrastructure.security.current_user import (
     get_current_user as resolve_current_user,
 )
 
-oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="/api/v1/auth/login",
+bearer_scheme = HTTPBearer(
+    scheme_name="BearerAuth",
 )
 
-
 async def get_authenticated_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
+    credentials: Annotated[
+        HTTPAuthorizationCredentials,
+        Depends(bearer_scheme),
+    ],
     token_provider: TokenProviderPort = Depends(get_token_provider),
     repository: UserRepositoryPort = Depends(get_user_repository),
 ) -> User:
     user = await resolve_current_user(
-        token=token,
+        token=credentials.credentials,
         token_provider=token_provider,
         repository=repository,
     )

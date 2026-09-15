@@ -358,3 +358,14 @@ def test_get_me_uses_user_from_database_not_token_role():
         assert data["role"] == "ARTIST"
     finally:
         app.dependency_overrides.clear()
+
+def test_openapi_uses_bearer_authentication():
+    response = client.get("/openapi.json")
+
+    assert response.status_code == 200
+
+    security_schemes = response.json()["components"]["securitySchemes"]
+
+    assert "BearerAuth" in security_schemes
+    assert security_schemes["BearerAuth"]["type"] == "http"
+    assert security_schemes["BearerAuth"]["scheme"] == "bearer"
