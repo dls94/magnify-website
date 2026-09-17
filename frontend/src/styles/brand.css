@@ -1,0 +1,20 @@
+:root {
+  --color-background: #ffffff;
+  --color-background-dark: #0a0e1a;
+  --color-background-darker: #05070a;
+
+  --color-gold: #a87b16;
+  --color-gold-light: #f1d592;
+
+  --color-white: #ffffff;
+  --color-text: #0a0e1a;
+  --color-text-muted: rgba(255, 255, 255, 0.5);
+
+  --content-width: 1200px;
+
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 5rem;
+}
