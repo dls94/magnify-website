@@ -3,7 +3,7 @@ from uuid import UUID
 
 import pytest
 
-from domain.models.artist import Artist
+from magnify_core.domain.models import Artist
 
 
 def test_artist_require_a_name():

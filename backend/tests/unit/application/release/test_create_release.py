@@ -1,9 +1,9 @@
 from datetime import date
 from unittest.mock import AsyncMock
 
-from application.ports.artist_repository import ArtistRepositoryPort
-from application.use_cases.release.create_release import CreateRelease
-from domain.models.release import ReleaseType
+from magnify_core.application.ports import ArtistRepositoryPort
+from magnify_core.application.use_cases.release.create_release import CreateRelease
+from magnify_core.domain.models import ReleaseType
 from tests.fakes.release_repository import InMemoryReleaseRepository
 
 

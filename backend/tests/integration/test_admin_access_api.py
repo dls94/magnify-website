@@ -3,10 +3,10 @@ from uuid import uuid4
 import pytest
 from fastapi import Depends, FastAPI
 from httpx import ASGITransport, AsyncClient
+from models import User, UserRole
 
-from domain.models.user import User, UserRole
-from infrastructure.security.admin_access import require_admin
-from infrastructure.security.dependencies import get_authenticated_user
+from magnify_api.infrastructure.security.admin_access import require_admin
+from magnify_api.infrastructure.security.dependencies import get_authenticated_user
 
 
 @pytest.fixture

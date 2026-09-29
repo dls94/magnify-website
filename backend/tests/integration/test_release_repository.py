@@ -1,8 +1,8 @@
 from datetime import date
 
-from domain.models.release import Release, ReleaseType
-from infrastructure.database.connection import AsyncSessionLocal
-from infrastructure.database.repositories.release_repository import ReleaseRepository
+from connection import AsyncSessionLocal
+from models.release import Release, ReleaseType
+from repositories.release_repository import ReleaseRepository
 
 
 async def test_save_persists_release_with_tracks():

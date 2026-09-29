@@ -1,13 +1,11 @@
 from uuid import uuid4
 
+from connection import AsyncSessionLocal
+from models import Artist, User, UserRole
+from models.user import UserModel
+from repositories.artist_repository import ArtistRepository
+from repositories.user_repository import UserRepository
 from sqlalchemy import select
-
-from domain.models.artist import Artist
-from domain.models.user import User, UserRole
-from infrastructure.database.connection import AsyncSessionLocal
-from infrastructure.database.models.user import UserModel
-from infrastructure.database.repositories.artist_repository import ArtistRepository
-from infrastructure.database.repositories.user_repository import UserRepository
 
 
 async def test_save_user_persists_user_in_database():

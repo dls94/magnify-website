@@ -1,4 +1,4 @@
-from application.ports.token_provider import TokenProviderPort
+from magnify_core.application.ports.token_provider import TokenProviderPort
 
 
 def test_token_provider_port_defines_create_and_decode():

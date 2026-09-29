@@ -4,12 +4,11 @@ from uuid import uuid4
 
 import pytest
 
-from application.exceptions import ArtistNotFoundError
-from application.ports.artist_repository import ArtistRepositoryPort
-from application.ports.event_repository import EventRepositoryPort
-from application.use_cases.event.update_event import UpdateEvent
-from domain.models.artist import Artist
-from domain.models.event import Event, EventType
+from magnify_core.application.exceptions import ArtistNotFoundError
+from magnify_core.application.ports import ArtistRepositoryPort
+from magnify_core.application.ports.event_repository import EventRepositoryPort
+from magnify_core.application.use_cases.event.update_event import UpdateEvent
+from magnify_core.domain.models import Artist, Event, EventType
 from tests.fakes.event_repository import InMemoryEventRepository
 
 

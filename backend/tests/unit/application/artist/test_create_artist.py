@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from application.use_cases.artist.create_artist import CreateArtist
-from domain.models.artist import Artist
+from magnify_core.application.use_cases.artist.create_artist import CreateArtist
+from magnify_core.domain.models import Artist
 from tests.fakes.artist_repository import InMemoryArtistRepository
 
 

@@ -3,7 +3,7 @@ from uuid import UUID
 
 import pytest
 
-from domain.models.release import Release, ReleaseType, Track
+from magnify_core.domain.models import Release, ReleaseType, Track
 
 ARTIST_ID = UUID("12345678-1234-5678-1234-567812345678")
 

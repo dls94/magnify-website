@@ -1,5 +1,5 @@
-from application.use_cases.artist.list_artists import ListArtists
-from domain.models.artist import Artist
+from magnify_core.application import ListArtists
+from magnify_core.domain.models import Artist
 from tests.fakes.artist_repository import InMemoryArtistRepository
 
 

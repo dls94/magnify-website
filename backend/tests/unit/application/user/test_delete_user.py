@@ -1,5 +1,5 @@
-from application.use_cases.user.delete_user import DeleteUser
-from domain.models.user import User
+from magnify_core.application.use_cases.user.delete_user import DeleteUser
+from magnify_core.domain.models import User
 from tests.fakes.user_repository import InMemoryUserRepository
 
 

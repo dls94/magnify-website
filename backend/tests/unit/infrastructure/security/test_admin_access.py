@@ -3,8 +3,8 @@ from uuid import uuid4
 import pytest
 from fastapi import HTTPException
 
-from domain.models.user import User, UserRole
-from infrastructure.security.admin_access import require_admin
+from magnify_api.infrastructure.security.admin_access import require_admin
+from magnify_core.domain.models import User, UserRole
 
 
 @pytest.mark.asyncio

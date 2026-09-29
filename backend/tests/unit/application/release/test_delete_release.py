@@ -1,8 +1,8 @@
 from datetime import date
 from uuid import uuid4
 
-from application.use_cases.release.delete_release import DeleteRelease
-from domain.models.release import Release, ReleaseType
+from magnify_core.application.use_cases.release.delete_release import DeleteRelease
+from magnify_core.domain.models import Release, ReleaseType
 from tests.fakes.release_repository import InMemoryReleaseRepository
 
 

@@ -1,4 +1,6 @@
-from infrastructure.security.argon2_password_hasher import Argon2PasswordHasher
+from magnify_api.infrastructure.security.argon2_password_hasher import (
+    Argon2PasswordHasher,
+)
 
 
 def test_hash_returns_argon2_hash():

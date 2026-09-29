@@ -1,8 +1,8 @@
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
+from models import UserRole
 
-from domain.models.user import UserRole
 from scripts.create_admin import create_admin, main
 
 
@@ -41,7 +41,7 @@ async def test_main_builds_dependencies_and_runs_bootstrap():
 
 @pytest.mark.asyncio
 async def test_create_admin_propagates_duplicate_email_error():
-    from application.exceptions import DuplicateUserEmailError
+    from magnify_core.application.exceptions import DuplicateUserEmailError
 
     create_user = Mock()
     create_user.execute = AsyncMock(
@@ -66,7 +66,7 @@ async def test_create_admin_propagates_duplicate_email_error():
 
 @pytest.mark.asyncio
 async def test_main_reports_duplicate_email(capsys):
-    from application.exceptions import DuplicateUserEmailError
+    from magnify_core.application.exceptions import DuplicateUserEmailError
 
     with (
         patch("scripts.create_admin.AsyncSessionLocal"),

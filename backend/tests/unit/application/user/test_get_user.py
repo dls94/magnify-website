@@ -1,5 +1,5 @@
-from application.use_cases.user.get_user import GetUser
-from domain.models.user import User
+from magnify_core.application.use_cases.user.get_user import GetUser
+from magnify_core.domain.models import User
 from tests.fakes.user_repository import InMemoryUserRepository
 
 

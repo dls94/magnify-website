@@ -1,14 +1,13 @@
 from uuid import uuid4
 
 import pytest
+from connection import AsyncSessionLocal
 from fastapi.testclient import TestClient
+from models import Artist, User, UserRole
+from repositories.artist_repository import ArtistRepository
 
-from domain.models.artist import Artist
-from domain.models.user import User, UserRole
-from infrastructure.database.connection import AsyncSessionLocal
-from infrastructure.database.repositories.artist_repository import ArtistRepository
-from infrastructure.security.dependencies import get_authenticated_user
-from main import app
+from magnify_api.infrastructure.security.dependencies import get_authenticated_user
+from magnify_api.main import app
 
 client = TestClient(app)
 

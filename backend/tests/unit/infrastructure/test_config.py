@@ -1,6 +1,6 @@
 import pytest
 
-from infrastructure.config import Settings
+from magnify_api.infrastructure.config import Settings
 
 
 def test_settings_requires_jwt_secret_key(monkeypatch):

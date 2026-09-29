@@ -2,7 +2,7 @@ from datetime import UTC, datetime, timedelta
 
 import jwt
 
-from infrastructure.security.jwt_token_provider import JwtTokenProvider
+from magnify_api.infrastructure.security.jwt_token_provider import JwtTokenProvider
 
 
 def test_create_access_token_returns_token():

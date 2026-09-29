@@ -1,7 +1,7 @@
 from datetime import date
 
-from application.use_cases.release.list_releases import ListReleases
-from domain.models.release import Release, ReleaseType
+from magnify_core.application.use_cases.release.list_releases import ListReleases
+from magnify_core.domain.models import Release, ReleaseType
 from tests.fakes.release_repository import InMemoryReleaseRepository
 
 

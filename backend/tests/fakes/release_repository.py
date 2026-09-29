@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from domain.models.release import Release
+from magnify_core.domain.models import Release
 
 
 class InMemoryReleaseRepository:

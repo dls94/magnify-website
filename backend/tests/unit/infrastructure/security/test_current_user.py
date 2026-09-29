@@ -2,8 +2,8 @@ from uuid import uuid4
 
 import pytest
 
-from domain.models.user import User, UserRole
-from infrastructure.security.current_user import get_current_user
+from magnify_api.infrastructure.security.current_user import get_current_user
+from magnify_core.domain.models import User, UserRole
 
 
 class FakeTokenProvider:

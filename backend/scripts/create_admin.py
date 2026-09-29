@@ -1,13 +1,16 @@
 import asyncio
 from getpass import getpass
 
-from application.exceptions import DuplicateUserEmailError
-from application.use_cases.user.create_user import CreateUser
-from domain.models.user import UserRole
-from infrastructure.database.connection import AsyncSessionLocal
-from infrastructure.database.repositories.artist_repository import ArtistRepository
-from infrastructure.database.repositories.user_repository import UserRepository
-from infrastructure.security.argon2_password_hasher import Argon2PasswordHasher
+from connection import AsyncSessionLocal
+from repositories.artist_repository import ArtistRepository
+from repositories.user_repository import UserRepository
+
+from magnify_api.infrastructure.security.argon2_password_hasher import (
+    Argon2PasswordHasher,
+)
+from magnify_core.application.exceptions import DuplicateUserEmailError
+from magnify_core.application.use_cases.user import CreateUser
+from magnify_core.domain.models import UserRole
 
 
 async def create_admin(

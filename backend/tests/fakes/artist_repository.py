@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from domain.models.artist import Artist
+from magnify_core.domain.models import Artist
 
 
 class InMemoryArtistRepository:

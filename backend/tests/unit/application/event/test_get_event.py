@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 
-from application.use_cases.event.get_event import GetEvent
-from domain.models.event import Event, EventType
+from magnify_core.application import GetEvent
+from magnify_core.domain.models import Event, EventType
 from tests.fakes.event_repository import InMemoryEventRepository
 
 

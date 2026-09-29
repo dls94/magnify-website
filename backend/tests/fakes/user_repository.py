@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from domain.models.user import User
+from magnify_core.domain.models import User
 
 
 class InMemoryUserRepository:

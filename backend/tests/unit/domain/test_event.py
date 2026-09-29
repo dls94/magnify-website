@@ -3,7 +3,7 @@ from uuid import UUID
 
 import pytest
 
-from domain.models.event import Event, EventType
+from magnify_core.domain.models import Event, EventType
 
 
 def make_event(**kwargs) -> Event:

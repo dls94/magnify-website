@@ -3,12 +3,11 @@ from uuid import uuid4
 
 import pytest
 
-from application.exceptions import ArtistNotFoundError
-from application.ports.artist_repository import ArtistRepositoryPort
-from application.ports.user_repository import UserRepositoryPort
-from application.use_cases.user.update_user import UpdateUser
-from domain.models.artist import Artist
-from domain.models.user import User, UserRole
+from magnify_core.application.exceptions import ArtistNotFoundError
+from magnify_core.application.ports import ArtistRepositoryPort
+from magnify_core.application.ports.user_repository import UserRepositoryPort
+from magnify_core.application.use_cases.user.update_user import UpdateUser
+from magnify_core.domain.models import Artist, User, UserRole
 from tests.fakes.user_repository import InMemoryUserRepository
 
 

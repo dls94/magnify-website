@@ -1,7 +1,7 @@
 from uuid import uuid4
 
-from application.use_cases.user.authenticate_user import AuthenticateUser
-from domain.models.user import User, UserRole
+from magnify_core.application.use_cases.user import AuthenticateUser
+from magnify_core.domain.models import User, UserRole
 from tests.fakes.user_repository import InMemoryUserRepository
 
 

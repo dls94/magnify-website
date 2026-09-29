@@ -1,5 +1,5 @@
-from infrastructure.database.dependencies import get_token_provider
-from infrastructure.security.jwt_token_provider import JwtTokenProvider
+from magnify_api.infrastructure.security.dependencies import get_token_provider
+from magnify_api.infrastructure.security.jwt_token_provider import JwtTokenProvider
 
 
 def test_get_token_provider_uses_settings(monkeypatch):

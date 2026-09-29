@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from domain.models.event import Event
+from magnify_core.domain.models import Event
 
 
 class InMemoryEventRepository:

@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import pytest
 
-from domain.models.user import User, UserRole
+from magnify_core.domain.models import User, UserRole
 
 
 def test_create_user():

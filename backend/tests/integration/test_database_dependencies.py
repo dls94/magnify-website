@@ -1,4 +1,4 @@
-from infrastructure.database.dependencies import get_session
+from dependencies import get_session
 
 
 async def test_get_session_provides_async_session():

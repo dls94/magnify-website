@@ -1,4 +1,4 @@
-from application.ports.password_hasher import PasswordHasherPort
+from magnify_core.application.ports import PasswordHasherPort
 
 
 def test_password_hasher_port_defines_hash_and_verify():

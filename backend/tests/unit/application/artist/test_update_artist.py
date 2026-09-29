@@ -2,8 +2,8 @@ from uuid import UUID
 
 import pytest
 
-from application.use_cases.artist.update_artist import UpdateArtist
-from domain.models.artist import Artist
+from magnify_core.application import UpdateArtist
+from magnify_core.domain.models import Artist
 from tests.fakes.artist_repository import InMemoryArtistRepository
 
 

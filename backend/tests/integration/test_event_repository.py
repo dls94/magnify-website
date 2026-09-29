@@ -1,9 +1,9 @@
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
-from domain.models.event import Event, EventType
-from infrastructure.database.connection import AsyncSessionLocal
-from infrastructure.database.repositories.event_repository import EventRepository
+from connection import AsyncSessionLocal
+from models import Event, EventType
+from repositories.event_repository import EventRepository
 
 
 async def test_save_persists_event():

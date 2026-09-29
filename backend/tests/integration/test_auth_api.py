@@ -3,20 +3,19 @@ from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 import jwt
-from fastapi.testclient import TestClient
-
-from domain.models.artist import Artist
-from domain.models.user import User, UserRole
-from infrastructure.database.connection import AsyncSessionLocal
-from infrastructure.database.dependencies import (
+from connection import AsyncSessionLocal
+from dependencies import (
     get_authenticate_user,
     get_token_provider,
 )
-from infrastructure.database.repositories.artist_repository import ArtistRepository
-from infrastructure.database.repositories.user_repository import UserRepository
-from infrastructure.security.dependencies import get_authenticated_user
-from infrastructure.security.jwt_token_provider import JwtTokenProvider
-from main import app
+from fastapi.testclient import TestClient
+from models import Artist, User, UserRole
+from repositories.artist_repository import ArtistRepository
+from repositories.user_repository import UserRepository
+
+from magnify_api.infrastructure.security.dependencies import get_authenticated_user
+from magnify_api.infrastructure.security.jwt_token_provider import JwtTokenProvider
+from magnify_api.main import app
 
 client = TestClient(app)
 
